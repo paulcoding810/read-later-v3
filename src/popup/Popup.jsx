@@ -3,6 +3,7 @@ import colors from 'tailwindcss/colors'
 import emptyIcon from '../assets/empty.svg'
 import loadingIcon from '../assets/loading.svg'
 import { messages } from '../background/message'
+import SearchBar from '../components/SearchBar'
 import Tab from '../components/Tab'
 import '../tailwind.css'
 import { setBadge, setBadgeBackground } from '../utils/badge'
@@ -21,12 +22,13 @@ const setStorageAndUpdateBadge = (newTabs) => {
     })
 }
 
-const getDatabase = async () => {
+const getReadLaterDatabase = async () => {
   const storage = await getValue('read_later', [])
   return storage
 }
 
 export function Popup() {
+  const [db, setDb] = useState([])
   const [tabs, setTabs] = useState([])
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
@@ -41,7 +43,8 @@ export function Popup() {
   const getDBAndSetTabs = useCallback(async (query) => {
     try {
       setLoading(true)
-      const data = await getDatabase()
+      const data = await getReadLaterDatabase()
+      setDb(data)
       let tabs = data
       if (query)
         tabs = data.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
@@ -54,11 +57,11 @@ export function Popup() {
   }, [])
 
   const removeTab = async (tab) => {
-    const temp = [...tabs]
-    const index = tabs.indexOf(tab)
-    temp.splice(index, 1)
-    setTabs(temp)
-    setStorageAndUpdateBadge(temp)
+    setTabs(tabs.filter((t) => t !== tab))
+
+    const newTabs = db.filter((t) => t !== tab)
+    setStorageAndUpdateBadge(newTabs)
+
     chrome.runtime.sendMessage({ type: messages.REMOVE_TAB, tab })
   }
 
@@ -71,20 +74,13 @@ export function Popup() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       getDBAndSetTabs(query)
-    }, 800)
+    }, 600)
     return () => clearTimeout(timeout)
   }, [query])
 
   return (
-    <div className="flex flex-col w-full">
-      <input
-        className="w-full px-3 py-1 mr-4 border-2 rounded-lg focus:outline-none focus:border-blue-500"
-        type="text"
-        placeholder="Search..."
-        value={query}
-        autoFocus
-        onChange={(e) => setQuery(e.target.value)}
-      />
+    <div className="flex flex-col w-full gap-2">
+      <SearchBar {...{ query, setQuery }} />
       {loading && <img src={loadingIcon} alt="Loading..." className="w-8 h-8 self-centerw-8" />}
       {!loading && tabs.length == 0 && (
         <div className="flex flex-col self-center gap-2 m-4 text-center placeholder:flex-col">
@@ -93,15 +89,20 @@ export function Popup() {
             alt="No results found."
             className="w-[100px] h-[100px] self-center"
           />
-          <span>
-            press <code className="mx-1">Ctrl+b</code>to add new tabs!
-          </span>
+          {query ? (
+            <span>No results found for "{query}"</span>
+          ) : (
+            <span>
+              press <code className="mx-1">Ctrl+b</code>to add new tabs!
+            </span>
+          )}
         </div>
       )}
-
-      {tabs.map((tab, index) => (
-        <Tab key={index} {...tab} onRemove={() => removeTab(tab)} />
-      ))}
+      <div>
+        {tabs.map((tab, index) => (
+          <Tab key={index} {...tab} onRemove={() => removeTab(tab)} />
+        ))}
+      </div>
     </div>
   )
 }
