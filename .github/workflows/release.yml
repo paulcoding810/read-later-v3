@@ -2,8 +2,8 @@ name: Release
 on:
   push:
     tags:
-      # - 'v*.*.*'
-      - 'feat/*'
+      - 'v*.*.*'
+    branches: ['main', 'feat/*']
 
 jobs:
   release:
