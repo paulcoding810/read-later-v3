@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import colors from 'tailwindcss/colors'
 import emptyIcon from '../assets/empty.svg'
 import loadingIcon from '../assets/loading.svg'
 import { messages } from '../background/message'
@@ -13,7 +14,7 @@ const setStorageAndUpdateBadge = (newTabs) => {
   })
     .then(() => {
       setBadge(newTabs.length)
-      setBadgeBackground('#3b82f6')
+      setBadgeBackground(colors.blue[500])
     })
     .catch((error) => {
       console.error('setStorageAndUpdateBadge', error)
@@ -21,9 +22,8 @@ const setStorageAndUpdateBadge = (newTabs) => {
 }
 
 const getDatabase = async () => {
-  const storage = await getValue()
-  const db = storage?.read_later ?? []
-  return db
+  const storage = await getValue('read_later', [])
+  return storage
 }
 
 export function Popup() {

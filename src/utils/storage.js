@@ -2,11 +2,11 @@ if (!chrome?.storage?.local) {
   throw new Error('[storage] chrome.storage.local not found!')
 }
 
-export function getValue(key = null) {
+export function getValue(key = null, defaultValue = null) {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get(key, (val) => {
       if (val) {
-        if (key) resolve(val[key])
+        if (key) resolve(val[key] ?? defaultValue)
         else resolve(val)
       } else {
         reject(new Error('[storage] Database null'))

@@ -1,10 +1,15 @@
-import { defineConfig } from 'vite'
 import { crx } from '@crxjs/vite-plugin'
 import react from '@vitejs/plugin-react'
+import { defineConfig, loadEnv } from 'vite'
+import { patchManifest } from './convert.js'
 import manifest from './src/manifest.js'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd())
+  const isFirefox = env.VITE_BROWSER === 'firefox'
+  const browser = isFirefox ? 'firefox' : 'chrome'
+  const convertedManifest = isFirefox ? patchManifest(manifest) : manifest
   return {
     build: {
       emptyOutDir: true,
@@ -24,7 +29,7 @@ export default defineConfig(({ mode }) => {
       ],
     },
 
-    plugins: [crx({ manifest }), react()],
+    plugins: [crx({ manifest: convertedManifest, browser }), react()],
     server: {
       port: 5173,
       strictPort: true,

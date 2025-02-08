@@ -128,12 +128,14 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 })
 
 const main = async () => {
-  getValue('read_later').then((tabs) => {
-    setBadge(String(tabs.length))
-    tabs.forEach((tab) => {
-      setUrls.add(tab.url)
+  getValue('read_later', [])
+    .then((tabs) => {
+      setBadge(String(tabs.length))
+      tabs.forEach((tab) => {
+        setUrls.add(tab.url)
+      })
     })
-  })
+    .catch(logError)
 }
 
 main()
