@@ -22,15 +22,14 @@ jobs:
       - name: Create chrome artifacts
         run: |
           echo "Building for chrome"
-          yarn build && mv build chrome
+          yarn zip
       - name: Create Firefox artifacts
         run: |
           echo "Building for Firefox"
           echo VITE_BROWSER=firefox > .env
-          yarn build && mv build firefox
+          yarn zip
       - uses: actions/upload-artifact@v4
         with:
           name: read-later
           path: |
-            chrome/
-            firefox/
+            package/*
