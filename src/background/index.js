@@ -2,7 +2,7 @@ import colors from 'tailwindcss/colors'
 import { setBadge, setBadgeBackground } from '../utils/badge'
 import { save2Json } from '../utils/file'
 import { getValue, setValue } from '../utils/storage'
-import { getCurrentWindowTabsInfo } from '../utils/tabs'
+import { createTab, getCurrentWindowTabsInfo } from '../utils/tabs'
 import devDB from './devdb'
 import { commands, messages } from './message'
 
@@ -104,10 +104,7 @@ chrome.contextMenus.create(
     id: 'export_json',
     title: 'Export JSON',
     contexts: ['action'],
-  },
-  () => {
-    console.log('done creating context menu')
-  },
+  }
 )
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
@@ -117,10 +114,14 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       save2Json(data)
       break
     case 'open_debug_tab':
-      createTab(chrome.runtime.getURL('_generated_background_page.html'), true)
+      const b = import.meta.env.VITE_BROWSER
+      const url = chrome.runtime.getURL(
+        b === 'firefox' ? '_generated_background_page.html' : 'service-worker-loader.js',
+      )
+      createTab(chrome.runtime.getURL(url), true)
       break
     case 'open_popup_tab':
-      createTab(chrome.runtime.getURL('popup/index.html'), true)
+      createTab(chrome.runtime.getURL('popup.html'), true)
       break
     default:
       break
