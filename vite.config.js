@@ -16,6 +16,14 @@ export default defineConfig(({ mode }) => {
       },
     },
 
+    resolve: {
+      alias: [
+        { find: '@', replacement: '/src' },
+        { find: '@assets', replacement: 'src/assets' },
+        { find: '@components', replacement: 'src/components' },
+      ],
+    },
+
     plugins: [crx({ manifest }), react()],
     server: {
       port: 5173,
