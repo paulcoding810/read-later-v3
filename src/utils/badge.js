@@ -14,6 +14,7 @@ export async function setBadgeBackground(color = colors.blue[500]) {
   try {
     const tab = await getCurrentTab()
     await chrome.action.setBadgeBackgroundColor({ color, tabId: tab.id })
+    await chrome.action.setBadgeTextColor({color: 'white'})
   } catch (error) {
     console.error('failed to set badge color', error)
   }
