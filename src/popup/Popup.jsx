@@ -79,7 +79,7 @@ export function Popup() {
   }, [query])
 
   return (
-    <div className="flex flex-col w-full gap-2">
+    <div className="flex flex-col w-full gap-2 bg-white">
       <SearchBar {...{ query, setQuery }} />
       {loading && <img src={loadingIcon} alt="Loading..." className="w-8 h-8 self-centerw-8" />}
       {!loading && tabs.length == 0 && (
