@@ -1,4 +1,4 @@
-import { isURL } from './url';
+import { isURL } from './url'
 
 /* tabs */
 export function saveTabs() {
@@ -9,21 +9,19 @@ export function saveTabs() {
     (tabs) => {
       const res = tabs.reduce((pre, tab) => {
         if (tab.title && tab.url) {
-          pre.push({ title: tab.title, url: tab.url });
+          pre.push({ title: tab.title, url: tab.url })
         }
-        return pre;
-      }, []);
-      const link = document.createElement('a');
-      link.href = `data:text/json;charset=utf-8,${encodeURIComponent(
-        JSON.stringify(res),
-      )}`;
-      link.download = `${tabs[0].title}.json`;
-      link.click();
+        return pre
+      }, [])
+      const link = document.createElement('a')
+      link.href = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(res))}`
+      link.download = `${tabs[0].title}.json`
+      link.click()
     },
-  );
+  )
 }
 
-export function getCurrentTabs(highlighted = false) {
+export function getCurrentWindowTabs(highlighted = false) {
   return new Promise((resolve, reject) => {
     chrome.tabs.query(
       {
@@ -33,18 +31,18 @@ export function getCurrentTabs(highlighted = false) {
       },
       (tabs) => {
         if (tabs) {
-          resolve(tabs);
+          resolve(tabs)
         } else {
-          reject(new Error('[tabs] No tabs found'));
+          reject(new Error('[tabs] No tabs found'))
         }
       },
-    );
-  });
+    )
+  })
 }
 
 export async function getCurrentTab() {
-  const tabs = await getCurrentTabs(false);
-  return tabs[0];
+  const tabs = await getCurrentWindowTabs(false)
+  return tabs[0]
 }
 
 /**
@@ -58,7 +56,7 @@ export function createTabs(urls) {
       currentWindow: true,
     },
     (tabs) => {
-      const currentTab = tabs[0];
+      const currentTab = tabs[0]
 
       urls.forEach((url, index) => {
         if (url) {
@@ -67,11 +65,11 @@ export function createTabs(urls) {
             openerTabId: currentTab.id,
             index: currentTab.index + index + 1,
             url,
-          });
+          })
         }
-      });
+      })
     },
-  );
+  )
 }
 
 /**
@@ -86,22 +84,22 @@ export function createTab(url, active = false) {
       currentWindow: true,
     },
     (tabs) => {
-      const currentTab = tabs[0];
+      const currentTab = tabs[0]
       chrome.tabs.create({
         active,
         openerTabId: currentTab.id,
         index: currentTab.index + 1,
         url: url ?? currentTab.url,
-      });
+      })
     },
-  );
+  )
 }
 
 /**
  * Duplicate current tab
  */
 export function dublicateTab() {
-  createTab('');
+  createTab('')
 }
 
 /**
@@ -110,8 +108,8 @@ export function dublicateTab() {
  * @param command
  */
 export function openUrlOrText(text, active = false) {
-  const url = isURL(text) ? text : `https://www.google.com/search?q=${text}`;
-  createTab(url, active);
+  const url = isURL(text) ? text : `https://www.google.com/search?q=${text}`
+  createTab(url, active)
 }
 
 /**
@@ -120,16 +118,34 @@ export function openUrlOrText(text, active = false) {
 export function updateUrl(url) {
   chrome.tabs.update({
     url,
-  });
+  })
 }
 
 export function getIcon(url) {
   try {
-    const { origin } = new URL(url);
-    const icon = `https://www.google.com/s2/favicons?sz=64&domain=${origin}`;
-    return icon;
+    const { origin } = new URL(url)
+    const icon = `https://www.google.com/s2/favicons?sz=64&domain=${origin}`
+    return icon
   } catch (error) {
-    console.error('fail to get icon', error);
-    return 'https://www.google.com/s2/favicons?sz=64&domain=github.com';
+    console.error('fail to get icon', error)
+    return 'https://www.google.com/s2/favicons?sz=64&domain=github.com'
   }
 }
+
+export function isTabValid(tab) {
+  return tab.url?.startsWith('http') && tab.title
+}
+
+export function parseTabInfo(tab) {
+  return {
+    url: tab.url ?? '',
+    title: tab.title ?? '',
+    date: Date.now(),
+  }
+}
+
+export async function getCurrentWindowTabsInfo(highlighted) {
+  const tabs = await getCurrentWindowTabs(highlighted)
+  return tabs.filter(isTabValid).map(parseTabInfo)
+}
+

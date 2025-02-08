@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import emptyIcon from '../assets/empty.svg'
 import loadingIcon from '../assets/loading.svg'
+import { messages } from '../background/message'
+import Tab from '../components/Tab'
+import '../tailwind.css'
 import { setBadge, setBadgeBackground } from '../utils/badge'
 import { getValue, setValue } from '../utils/storage'
-import '../tailwind.css'
-import Tab from '../components/Tab'
 
 const setStorageAndUpdateBadge = (newTabs) => {
   setValue({
@@ -58,6 +59,7 @@ export function Popup() {
     temp.splice(index, 1)
     setTabs(temp)
     setStorageAndUpdateBadge(temp)
+    chrome.runtime.sendMessage({ type: messages.REMOVE_TAB, tab })
   }
 
   // init data from storage

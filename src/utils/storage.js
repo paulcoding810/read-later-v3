@@ -6,7 +6,8 @@ export function getValue(key = null) {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get(key, (val) => {
       if (val) {
-        resolve(val)
+        if (key) resolve(val[key])
+        else resolve(val)
       } else {
         reject(new Error('[storage] Database null'))
       }

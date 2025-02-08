@@ -18,6 +18,15 @@ export default defineManifest({
     default_popup: 'popup.html',
     default_icon: 'img/logo-48.png',
   },
+  commands: {
+    save_tabs: {
+      suggested_key: {
+        default: 'Ctrl+B',
+        mac: 'MacCtrl+B',
+      },
+      description: "Send a 'read-later' event to the extension",
+    },
+  },
   options_page: 'options.html',
   devtools_page: 'devtools.html',
   background: {
@@ -39,7 +48,7 @@ export default defineManifest({
       matches: [],
     },
   ],
-  permissions: ['sidePanel', 'storage'],
+  permissions: ['sidePanel', 'storage', 'tabs', 'contextMenus', 'scripting', 'activeTab', 'downloads'],
   chrome_url_overrides: {
     newtab: 'newtab.html',
   },

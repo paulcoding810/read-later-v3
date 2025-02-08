@@ -3,12 +3,15 @@
  */
 export function save2Json(data) {
   if (data) {
-    const url = URL.createObjectURL(new Blob([JSON.stringify(data)], {
-      type: 'text/plain',
-    }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `read_later_${new Date().toDateString().replaceAll(' ', '_')}.json`;
-    link.click();
+    // not working for v3
+    // const blob = new Blob([JSON.stringify(data)], { type: 'text/plain' })
+    // const url = URL.createObjectURL(blob)
+
+    const url = `data:,${JSON.stringify(data, null, 2)}`
+    chrome.downloads.download({
+      url: url,
+      filename: `read_later_${new Date().toDateString().replaceAll(' ', '_')}.json`,
+      saveAs: true,
+    })
   }
 }
