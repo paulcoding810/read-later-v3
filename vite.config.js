@@ -17,5 +17,16 @@ export default defineConfig(({ mode }) => {
     },
 
     plugins: [crx({ manifest }), react()],
+    server: {
+      port: 5173,
+      strictPort: true,
+      hmr: {
+        port: 5173,
+      },
+    },
+    // https://github.com/bozzhik/snable/commit/e7603e71a19edd782e22a7a94a4b2a96f6fa34af
+    legacy: {
+      skipWebSocketTokenCheck: true,
+    },
   }
 })
