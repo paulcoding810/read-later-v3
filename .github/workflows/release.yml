@@ -3,7 +3,6 @@ on:
   push:
     tags:
       - 'v*.*.*'
-    branches: ['main', 'feat/*']
 
 jobs:
   release:
