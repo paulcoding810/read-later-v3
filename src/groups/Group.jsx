@@ -1,8 +1,16 @@
+import { createTab } from '../utils/tabs'
+
+function openUrls(urls) {
+  urls.toReversed().forEach((url, index) => {
+    setTimeout(() => createTab(url), index * 250)
+  })
+}
+
 export default function Group({ name, urls }) {
   return (
     <div
       className="flex flex-col px-2 py-1 rounded-lg justify-center gap-2 hover:cursor-pointer hover:bg-blue-200 hover:*:bg-opacity-25"
-      onClick={(e) => {
+      onClick={() => {
         openUrls(urls)
       }}
     >

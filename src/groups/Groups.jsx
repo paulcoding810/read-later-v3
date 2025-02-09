@@ -14,12 +14,6 @@ function openInNewTab() {
   }, 250)
 }
 
-function openUrls(urls) {
-  urls.toReversed().forEach((url, index) => {
-    setTimeout(() => createTab(url), index * 250)
-  })
-}
-
 export default function Groups({ setShowsGroups }) {
   const [groups, setGroups] = useState(devdb.groups)
   const [editing, setEditing] = useState(false)
