@@ -85,35 +85,35 @@ chrome.commands.onCommand.addListener(async (command) => {
   }
 })
 
-if (!isProd) {
-  chrome.contextMenus.create({
-    id: 'open_debug_tab',
-    title: 'Debug',
-    contexts: ['action'],
-  })
-  chrome.contextMenus.create({
-    id: 'open_popup_tab',
-    title: 'Popup',
-    contexts: ['action'],
-  })
-}
+// if (!isProd) {
+//   chrome.contextMenus.create({
+//     id: 'open_debug_tab',
+//     title: 'Debug',
+//     contexts: ['action'],
+//   })
+//   chrome.contextMenus.create({
+//     id: 'open_popup_tab',
+//     title: 'Popup',
+//     contexts: ['action'],
+//   })
+// }
 
-chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  switch (info.menuItemId) {
-    case 'open_debug_tab':
-      const b = import.meta.env.VITE_BROWSER
-      const url = chrome.runtime.getURL(
-        b === 'firefox' ? '_generated_background_page.html' : 'service-worker-loader.js',
-      )
-      createTab(chrome.runtime.getURL(url), true)
-      break
-    case 'open_popup_tab':
-      createTab(chrome.runtime.getURL('popup.html'), true)
-      break
-    default:
-      break
-  }
-})
+// chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+//   switch (info.menuItemId) {
+//     case 'open_debug_tab':
+//       const b = import.meta.env.VITE_BROWSER
+//       const url = chrome.runtime.getURL(
+//         b === 'firefox' ? '_generated_background_page.html' : 'service-worker-loader.js',
+//       )
+//       createTab(chrome.runtime.getURL(url), true)
+//       break
+//     case 'open_popup_tab':
+//       createTab(chrome.runtime.getURL('popup.html'), true)
+//       break
+//     default:
+//       break
+//   }
+// })
 
 const main = async () => {
   getValue('read_later', [])
