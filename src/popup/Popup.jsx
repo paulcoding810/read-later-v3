@@ -82,12 +82,12 @@ export function Popup() {
   if (showsGroups) return <Groups {...{ setShowsGroups }} />
 
   return (
-    <div className="flex flex-col w-full gap-2 bg-white">
-      <div className="flex flex-row items-center gap-1">
+    <div className="flex flex-col w-full gap-2">
+      <div className="flex flex-row items-center h-8 gap-1">
         <SearchBar {...{ query, setQuery }} />
         <button
           onClick={() => setShowsGroups(!showsGroups)}
-          className="p-1 border-2 border-blue-500 rounded hover:bg-blue-200"
+          className="flex items-center justify-center w-8 h-8 p-1 border-2 border-blue-500 rounded hover:bg-blue-200"
         >
           <img src={groupsIcon} alt="Group" />
         </button>
