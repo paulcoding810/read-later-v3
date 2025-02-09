@@ -35,13 +35,6 @@ export function Popup() {
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(true)
 
-  // const transitions = useTransition(filteredTabs ?? [], {
-  //   keys: (item) => item.url,
-  //   from: { opacity: 0 },
-  //   enter: { opacity: 1 },
-  //   leave: { opacity: 0 },
-  // });
-
   const getDBAndSetTabs = useCallback(async (query) => {
     try {
       setLoading(true)
@@ -76,6 +69,10 @@ export function Popup() {
 
   // debounce query
   useEffect(() => {
+    // set loading to true if query is cleared
+    if (!query) {
+      setLoading(true)
+    }
     const timeout = setTimeout(() => {
       getDBAndSetTabs(query)
     }, 600)
