@@ -33,23 +33,21 @@ export function Popup() {
   const [db, setDb] = useState([])
   const [tabs, setTabs] = useState([])
   const [query, setQuery] = useState('')
-  const [loading, setLoading] = useState(true)
 
   const getDBAndSetTabs = useCallback(async (query) => {
     try {
-      setLoading(true)
       const data = await getReadLaterDatabase()
       setDb(data)
       let tabs = data
       if (query)
         tabs = data.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
-      setTabs(tabs.toReversed())
+      // delay a bit for better ux
+      setTimeout(() => {
+        setTabs(tabs.toReversed())
+      }, 50)
     } catch (error) {
       console.error('failed to get data', error)
     } finally {
-      setTimeout(() => {
-        setLoading(false)
-      }, 50)
     }
   }, [])
 
@@ -69,10 +67,9 @@ export function Popup() {
 
   // debounce query
   useEffect(() => {
-    // set loading to true if query is cleared
-    if (!query) {
-      setLoading(true)
-    }
+    // when user clear the search bar, show all tabs again (still need to call getDBAndSetTabs)
+    if (query === '') setTabs(db.toReversed())
+
     const timeout = setTimeout(() => {
       getDBAndSetTabs(query)
     }, 600)
@@ -92,7 +89,7 @@ export function Popup() {
           <img src={groupsIcon} alt="Group" />
         </button>
       </div>
-      {!loading && tabs.length == 0 && (
+      {tabs.length == 0 && (
         <div className="flex flex-col self-center gap-2 m-4 text-center placeholder:flex-col">
           <img
             src={emptyIcon}
