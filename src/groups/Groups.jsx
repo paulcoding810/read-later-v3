@@ -19,7 +19,7 @@ export default function Groups({ setShowsGroups }) {
   const [editing, setEditing] = useState(false)
 
   return (
-    <div>
+    <div className='w-80'>
       {setShowsGroups && (
         <div className="flex flex-row items-center flex-1 gap-2 px-4 py-2 text-white bg-blue-500">
           <button
