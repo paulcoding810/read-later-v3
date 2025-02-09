@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import colors from 'tailwindcss/colors'
+import downloadIcon from '../assets/download.svg'
 import emptyIcon from '../assets/empty.svg'
 import groupsIcon from '../assets/workspaces.svg'
 import { messages } from '../background/message'
@@ -8,6 +9,7 @@ import Tab from '../components/Tab'
 import Groups from '../groups/Groups'
 import '../tailwind.css'
 import { setBadge, setBadgeBackground } from '../utils/badge'
+import { save2Json } from '../utils/file'
 import { getValue, setValue } from '../utils/storage'
 
 const setStorageAndUpdateBadge = (newTabs) => {
@@ -21,6 +23,10 @@ const setStorageAndUpdateBadge = (newTabs) => {
     .catch((error) => {
       console.error('setStorageAndUpdateBadge', error)
     })
+}
+
+const exportJson = async () => {
+  save2Json(await getValue(null, {}))
 }
 
 const getReadLaterDatabase = async () => {
@@ -83,6 +89,14 @@ export function Popup() {
       <div className="flex flex-row items-center h-8 gap-1">
         <SearchBar {...{ query, setQuery }} />
         <button
+          title="Export Data"
+          onClick={exportJson}
+          className="flex items-center justify-center w-8 h-8 p-1 border-2 border-blue-500 rounded hover:bg-blue-200"
+        >
+          <img src={downloadIcon} alt="Download" />
+        </button>
+        <button
+          title="Groups"
           onClick={() => setShowsGroups(!showsGroups)}
           className="flex items-center justify-center w-8 h-8 p-1 border-2 border-blue-500 rounded hover:bg-blue-200"
         >

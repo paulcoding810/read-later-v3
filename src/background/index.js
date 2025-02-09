@@ -1,6 +1,5 @@
 import colors from 'tailwindcss/colors'
 import { setBadge, setBadgeBackground } from '../utils/badge'
-import { save2Json } from '../utils/file'
 import { getValue, setValue } from '../utils/storage'
 import { createTab, getCurrentWindowTabsInfo } from '../utils/tabs'
 import devDB from './devdb'
@@ -99,20 +98,8 @@ if (!isProd) {
   })
 }
 
-chrome.contextMenus.create(
-  {
-    id: 'export_json',
-    title: 'Export JSON',
-    contexts: ['action'],
-  }
-)
-
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   switch (info.menuItemId) {
-    case 'export_json':
-      const data = await getValue()
-      save2Json(data)
-      break
     case 'open_debug_tab':
       const b = import.meta.env.VITE_BROWSER
       const url = chrome.runtime.getURL(
