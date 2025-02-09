@@ -21,7 +21,7 @@ export default function SearchBar({ query, setQuery }) {
       {query.length > 0 && (
         <button
           onClick={() => setQuery('')}
-          className="rounded"
+          className="w-4 h-4 rounded"
         >
           <img src={closeIcon} alt="Close" title="Clear" />
         </button>
