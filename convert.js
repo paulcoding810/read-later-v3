@@ -1,10 +1,17 @@
 // https://github.com/FoxRefire/ChromeXPIPorter/blob/main/patchExt.js
 
 import manifest from './src/manifest.js'
+import packageData from './package.json' assert { type: 'json' }
+const isDev = process.env.NODE_ENV === 'development'
 
-export async function patchManifest() {
+function generateRandomGeckoId() {
   let randomId = (Math.random() + 1).toString(36).substring(2)
   let newExtId = `${randomId}@_XPIPorter`
+  return newExtId
+}
+
+export async function patchManifest() {
+  const newExtId = `${packageData.name}${isDev ? '-dev' : ''}@${packageData.author}.com`
 
   if (!manifest.background) {
     manifest.background = {
@@ -29,7 +36,6 @@ export async function patchManifest() {
     }
     delete manifest.side_panel
   }
-
   manifest.browser_specific_settings = {
     gecko: {
       id: newExtId,
