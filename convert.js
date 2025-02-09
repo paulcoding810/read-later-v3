@@ -48,5 +48,8 @@ export async function patchManifest() {
     })
   }
 
+  // custom firefox version
+  manifest.version = '3' + manifest.version.slice(1)
+
   return manifest
 }
