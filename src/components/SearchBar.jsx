@@ -5,7 +5,7 @@ export default function SearchBar({ query, setQuery }) {
 
   return (
     <div
-      className={`flex items-center gap-1 border-2 px-2 rounded-lg ${focused ? 'border-blue-500' : ''}`}
+      className={`flex flex-1 items-center gap-1 border-2 px-2 rounded-lg ${focused ? 'border-blue-500' : ''}`}
     >
       <input
         className="flex-1 py-2 border-none outline-none"

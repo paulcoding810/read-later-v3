@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import colors from 'tailwindcss/colors'
 import emptyIcon from '../assets/empty.svg'
-import loadingIcon from '../assets/loading.svg'
+import groupsIcon from '../assets/workspaces.svg'
 import { messages } from '../background/message'
 import SearchBar from '../components/SearchBar'
 import Tab from '../components/Tab'
+import Groups from '../groups/Groups'
 import '../tailwind.css'
 import { setBadge, setBadgeBackground } from '../utils/badge'
 import { getValue, setValue } from '../utils/storage'
@@ -28,6 +29,7 @@ const getReadLaterDatabase = async () => {
 }
 
 export function Popup() {
+  const [showsGroups, setShowsGroups] = useState(false)
   const [db, setDb] = useState([])
   const [tabs, setTabs] = useState([])
   const [query, setQuery] = useState('')
@@ -80,9 +82,19 @@ export function Popup() {
     return () => clearTimeout(timeout)
   }, [query])
 
+  if (showsGroups) return <Groups {...{ setShowsGroups }} />
+
   return (
     <div className="flex flex-col w-full gap-2 bg-white">
-      <SearchBar {...{ query, setQuery }} />
+      <div className="flex flex-row items-center gap-1">
+        <SearchBar {...{ query, setQuery }} />
+        <button
+          onClick={() => setShowsGroups(!showsGroups)}
+          className="p-1 border-2 border-blue-500 rounded hover:bg-blue-200"
+        >
+          <img src={groupsIcon} alt="Group" />
+        </button>
+      </div>
       {!loading && tabs.length == 0 && (
         <div className="flex flex-col self-center gap-2 m-4 text-center placeholder:flex-col">
           <img
