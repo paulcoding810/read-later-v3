@@ -27,7 +27,6 @@ export default defineManifest({
       description: "Send a 'read-later' event to the extension",
     },
   },
-  options_page: 'options.html',
   background: {
     service_worker: 'src/background/index.js',
     type: 'module',
@@ -46,8 +45,5 @@ export default defineManifest({
       matches: [],
     },
   ],
-  permissions: ['storage', 'tabs', 'contextMenus', 'scripting', 'activeTab', 'downloads'],
-  chrome_url_overrides: {
-    newtab: 'newtab.html',
-  },
+  permissions: ['storage', 'tabs', 'contextMenus', 'downloads'],
 })
