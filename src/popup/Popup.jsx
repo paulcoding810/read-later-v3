@@ -18,7 +18,7 @@ import { getCurrentWindowTabs } from '../utils/tabs'
 
 const setStorageAndUpdateBadge = (newTabs) => {
   setValue({
-    read_later: newTabs.toReversed(),
+    read_later: newTabs,
   })
     .then(() => {
       setBadge(newTabs.length)
