@@ -36,6 +36,10 @@ async function getAndSaveTabsToReadLater() {
         console.log('Tab existed', tab)
         setBadgeBackground(colors.orange[500])
       } else {
+        if (tab.id) {
+          setBadgeBackground(colors.green[500], tab.id)
+          delete tab.id
+        }
         db.push(tab)
         setUrls.add(tab.url)
       }

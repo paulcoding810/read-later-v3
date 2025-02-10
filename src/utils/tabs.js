@@ -141,6 +141,7 @@ export function parseTabInfo(tab) {
     url: tab.url ?? '',
     title: tab.title ?? '',
     date: Date.now(),
+    id: tab.id,
   }
 }
 
