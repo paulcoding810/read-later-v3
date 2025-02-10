@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import colors from 'tailwindcss/colors'
 import downloadIcon from '../assets/download.svg'
 import emptyIcon from '../assets/empty.svg'
+import downIcon from '../assets/expand_circle_down.svg'
+import upIcon from '../assets/expand_circle_up.svg'
 import groupsIcon from '../assets/workspaces.svg'
 import { messages } from '../background/message'
 import SearchBar from '../components/SearchBar'
@@ -39,6 +41,7 @@ export function Popup() {
   const [db, setDb] = useState([])
   const [tabs, setTabs] = useState([])
   const [query, setQuery] = useState('')
+  const [expanded, setExpanded] = useState(false)
 
   const getDBAndSetTabs = useCallback(async (query) => {
     try {
@@ -89,18 +92,20 @@ export function Popup() {
       <div className="flex flex-row items-center h-8 gap-1">
         <SearchBar {...{ query, setQuery }} />
         <button
-          title="Export Data"
-          onClick={exportJson}
-          className="flex items-center justify-center w-8 h-8 p-1 border-2 border-blue-500 rounded hover:bg-blue-200"
-        >
-          <img src={downloadIcon} alt="Download" />
-        </button>
-        <button
           title="Groups"
           onClick={() => setShowsGroups(!showsGroups)}
           className="flex items-center justify-center w-8 h-8 p-1 border-2 border-blue-500 rounded hover:bg-blue-200"
         >
           <img src={groupsIcon} alt="Group" />
+        </button>
+        <button
+          title="More"
+          onClick={() => {
+            setExpanded(!expanded)
+          }}
+          className="flex items-center justify-center w-8 h-8 p-1 border-2 border-blue-500 rounded hover:bg-blue-200"
+        >
+          <img src={expanded ? upIcon : downIcon} alt="More" />
         </button>
       </div>
       {tabs.length == 0 && (
@@ -119,11 +124,24 @@ export function Popup() {
           )}
         </div>
       )}
-      <div>
+      <div className={expanded ? 'pointer-events-none' :''}>
         {tabs.map((tab, index) => (
           <Tab key={index} {...tab} onRemove={() => removeTab(tab)} />
         ))}
       </div>
+
+      {expanded && (
+        <div className="absolute right-0 flex flex-col gap-2 p-2 bg-white border border-blue-500 rounded shadow-lg top-8">
+          <button
+            title="Export Data"
+            onClick={exportJson}
+            className="flex flex-row items-center justify-center gap-1 p-1 hover:bg-blue-200"
+          >
+            <img className="w-4 h-4" src={downloadIcon} alt="Download" />
+            <span>Export Data</span>
+          </button>
+        </div>
+      )}
     </div>
   )
 }
