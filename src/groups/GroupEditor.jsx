@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import closeIcon from '../assets/close.svg'
 import saveIcon from '../assets/save.svg'
+import { setValue } from '../utils/storage'
 
 export default function GroupEditor({ groups, setGroups, onCancel }) {
   const [text, setText] = useState(JSON.stringify(groups, null, 4))
@@ -8,8 +9,15 @@ export default function GroupEditor({ groups, setGroups, onCancel }) {
 
   function submit() {
     try {
-      let newGroups = JSON.parse(text)
-      setGroups(newGroups)
+      const newGroups = JSON.parse(text)
+      setValue({ groups: newGroups })
+        .then(() => {
+          setGroups(newGroups)
+        })
+        .catch((error) => {
+          console.log(`Failed to set value: ${error}`)
+          setError(error)
+        })
     } catch (error) {
       console.log(error)
       setError(error)
@@ -28,7 +36,7 @@ export default function GroupEditor({ groups, setGroups, onCancel }) {
         }}
       />
 
-      {error && <p className="text-sm text-red-500">{error.message}</p>}
+      {error && <p className="text-sm text-red-500">{error.message ?? error.toString()}</p>}
 
       <div className="flex flex-row items-center gap-2">
         <button onClick={submit} className="p-2 rounded hover:bg-blue-200">

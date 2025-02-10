@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import backIcon from '../assets/arrow_back.svg'
 import editIcon from '../assets/edit.svg'
 import openInNewIcon from '../assets/open_in_new.svg'
-import devdb from '../background/devdb'
+import { getValue } from '../utils/storage'
 import { createTab } from '../utils/tabs'
 import Group from './Group'
 import GroupEditor from './GroupEditor'
@@ -14,12 +14,21 @@ function openInNewTab() {
   }, 250)
 }
 
+async function getGroupsDatabase() {
+  const storage = await getValue('groups', {})
+  return storage
+}
+
 export default function Groups({ setShowsGroups }) {
-  const [groups, setGroups] = useState(devdb.groups)
+  const [groups, setGroups] = useState({})
   const [editing, setEditing] = useState(false)
 
+  useEffect(() => {
+    getGroupsDatabase().then(setGroups)
+  }, [])
+
   return (
-    <div className='w-80'>
+    <div>
       {setShowsGroups && (
         <div className="flex flex-row items-center flex-1 gap-2 px-4 py-2 text-white bg-blue-500">
           <button
