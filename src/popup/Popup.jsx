@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import colors from 'tailwindcss/colors'
+import copyIcon from '../assets/copy.svg'
 import downloadIcon from '../assets/download.svg'
 import emptyIcon from '../assets/empty.svg'
 import downIcon from '../assets/expand_circle_down.svg'
@@ -13,6 +14,7 @@ import '../tailwind.css'
 import { setBadge, setBadgeBackground } from '../utils/badge'
 import { save2Json } from '../utils/file'
 import { getValue, setValue } from '../utils/storage'
+import { getCurrentWindowTabs } from '../utils/tabs'
 
 const setStorageAndUpdateBadge = (newTabs) => {
   setValue({
@@ -29,6 +31,12 @@ const setStorageAndUpdateBadge = (newTabs) => {
 
 const exportJson = async () => {
   save2Json(await getValue(null, {}))
+}
+
+const copyTabUrl = async () => {
+  const tabs = await getCurrentWindowTabs(true)
+  const urls = tabs.map((tab) => tab.url)
+  navigator.clipboard.writeText(JSON.stringify(urls))
 }
 
 const getReadLaterDatabase = async () => {
@@ -124,21 +132,36 @@ export function Popup() {
           )}
         </div>
       )}
-      <div className={expanded ? 'pointer-events-none' :''}>
+      <div className={expanded ? 'pointer-events-none' : ''}>
         {tabs.map((tab, index) => (
           <Tab key={index} {...tab} onRemove={() => removeTab(tab)} />
         ))}
       </div>
 
       {expanded && (
-        <div className="absolute right-0 flex flex-col gap-2 p-2 bg-white border border-blue-500 rounded shadow-lg top-8">
+        <div className="absolute right-0 flex flex-col items-start gap-2 p-2 bg-white border border-blue-500 rounded shadow-lg top-8">
           <button
             title="Export Data"
-            onClick={exportJson}
-            className="flex flex-row items-center justify-center gap-1 p-1 hover:bg-blue-200"
+            onClick={() => {
+              exportJson()
+              setExpanded(false)
+            }}
+            className="flex flex-row items-center w-full gap-1 p-1 hover:bg-blue-200"
           >
             <img className="w-4 h-4" src={downloadIcon} alt="Download" />
             <span>Export Data</span>
+          </button>
+
+          <button
+            title="Copy tabs urls"
+            onClick={() => {
+              copyTabUrl()
+              setExpanded(false)
+            }}
+            className="flex flex-row items-center w-full gap-1 p-1 hover:bg-blue-200"
+          >
+            <img className="w-4 h-4" src={copyIcon} alt="Copy" />
+            <span>Copy tabs urls</span>
           </button>
         </div>
       )}
