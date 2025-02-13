@@ -1,15 +1,19 @@
 name: Build
 
 on:
+  pull_request:
+    branches:
+      - '*'
   push:
-    branches: ['main', 'feat/*']
+    branches:
+      - main
 
 jobs:
   build:
     name: Create artifacts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
@@ -25,6 +29,6 @@ jobs:
         run: yarn zip:firefox
       - uses: actions/upload-artifact@v4
         with:
-          name: zip-extensions
+          name: extensions
           path: |
             package/*

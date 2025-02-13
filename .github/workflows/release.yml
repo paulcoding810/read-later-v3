@@ -11,17 +11,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '21'
+      - name: install dependency
+        run: yarn
+      - name: Create chrome artifacts
+        run: yarn zip
+      - name: Create Firefox artifacts
+        run: yarn zip:firefox
+
       - name: Build Changelog
         id: github_release
         uses: mikepenz/release-changelog-builder-action@v5
         with:
           mode: 'COMMIT'
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: zip-extensions
-          path: ./package
-          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
