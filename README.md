@@ -1,20 +1,30 @@
+[![Badge Commits]][Commit Rate]
+[![Badge Issues]][Issues]
+[![Badge License]][License]
+[![Badge Mozilla]][Mozilla]
+[![Badge Chrome]][Chrome]
+
+---
+
 <h1 align="center">
-  <img src="https://raw.githubusercontent.com/longnghia/read-later/main/public/icon-128.png" height="38" width="38" alt="Read Later Icon">
-  Read Later
+<sub>
+<img src="public/img/logo-48.png" height="38" width="38">
+</sub>
+Read Later
 </h1>
 
-<p align="center">
-  A browser extension to efficiently manage and save tabs for later reading
-</p>
+---
 
 <p align="center">
-  <a href="https://github.com/longnghia/read-later/commits/main">
-    <img src="https://img.shields.io/github/commit-activity/m/longnghia/read-later?label=Commits" alt="Commit Activity">
-  </a>
-  <a href="https://addons.mozilla.org/addon/read-it-later/">
-    <img src="https://img.shields.io/amo/rating/read-it-later?label=Firefox" alt="Mozilla Add-on Rating">
-  </a>
+<a href="https://addons.mozilla.org/addon/read-it-later/"><img src="https://user-images.githubusercontent.com/585534/107280546-7b9b2a00-6a26-11eb-8f9f-f95932f4bfec.png" alt="Get Read Later for Firefox"></a>
+<a href="https://chromewebstore.google.com/detail/read-later/cbkpffbpdnkdlfdaoeakdelhmakefomb"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get Read Later for Chromium"></a>
 </p>
+
+***
+
+Read Later is a browser extension to efficiently manage and save tabs for later reading
+
+***
 
 ## ℹ️ About
 
@@ -43,14 +53,6 @@ Older versions:
 
 ## 🛠️ Installation
 
-### For Users
-
-<a href="https://addons.mozilla.org/en-US/firefox/addon/read-it-later/">
-  <img src="https://github.com/user-attachments/assets/a89c4124-119a-4147-822d-23ac1e831d18" alt="Get Read Later for Firefox">
-</a>
-
-### For Developers
-
 Prerequisites:
 
 - Node.js >= 14
@@ -63,31 +65,56 @@ Setup:
 yarn
 ```
 
-## 💻 Development
+### 💻 Development (Chrome)
 
 ```bash
 # Start development server
 yarn dev
 ```
 
-## 📦 Building
+### 🏗️ Building
 
 ```bash
-# Set VITE_BROWSER=chrome in .env for Firefox build
-yarn build
+yarn build # for Chrome extension
+yarn build:firefox # for Firefox add-on
+```
+
+### 📦 Packing
+
+To create a zip file for distribution, run:
+
+```bash
+yarn zip # for chrome
+yarn zip:firefox # for firefox
 ```
 
 ### Loading in Chrome
 
 1. Enable Developer mode
 2. Click "Load unpacked"
-3. Select the `read-later/build` folder
+3. Select the `build` folder
 
 ### Loading in Firefox
 
 1. Navigate to `about:debugging#/runtime/this-firefox`
 2. Click "Load Temporary Add-on"
-3. Select the `read-later/build` folder
+3. Select the `build` folder
 
 ---
+
 Built with [create-chrome-ext](https://github.com/guocaoyi/create-chrome-ext)
+
+<!----------------------------------[ Badges ]--------------------------------->
+
+[Mozilla]: https://addons.mozilla.org/addon/read-it-later/
+[Chrome]: https://chromewebstore.google.com/detail/read-later/cbkpffbpdnkdlfdaoeakdelhmakefomb
+[License]: LICENSE.txt
+
+[Commit Rate]: https://github.com/paulcoding810/read-later-v3/commits/main
+[Issues]: https://github.com/paulcoding810/read-later-v3/issues
+
+[Badge Commits]: https://img.shields.io/github/commit-activity/m/paulcoding810/read-later-v3?label=Commits
+[Badge Mozilla]: https://img.shields.io/amo/rating/read-it-later?label=Firefox
+[Badge License]: https://img.shields.io/badge/License-MIT-blue.svg
+[Badge Chrome]: https://img.shields.io/chrome-web-store/rating/cbkpffbpdnkdlfdaoeakdelhmakefomb?label=Chrome
+[Badge Issues]: https://img.shields.io/github/issues/paulcoding810/read-later-v3/issues
