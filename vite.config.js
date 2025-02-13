@@ -1,22 +1,22 @@
 import { crx } from '@crxjs/vite-plugin'
 import react from '@vitejs/plugin-react'
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig } from 'vite'
 import { patchManifest } from './convert.js'
 import manifest from './src/manifest.js'
 
+const browser = process.env.BROWSER ?? 'chrome'
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd())
-  const isFirefox = env.VITE_BROWSER === 'firefox'
-  const browser = isFirefox ? 'firefox' : 'chrome'
-  const convertedManifest = isFirefox ? patchManifest(manifest) : manifest
+  const convertedManifest = browser === 'firefox' ? patchManifest(manifest) : manifest
+
   return {
     build: {
       emptyOutDir: true,
       outDir: 'build',
       rollupOptions: {
         input: {
-          groups: './groups.html'
+          groups: './groups.html',
         },
         output: {
           chunkFileNames: 'assets/chunk-[hash].js',

@@ -20,14 +20,9 @@ jobs:
       - name: install dependency
         run: yarn
       - name: Create chrome artifacts
-        run: |
-          echo "Building for chrome"
-          yarn zip
+        run: yarn zip
       - name: Create Firefox artifacts
-        run: |
-          echo "Building for Firefox"
-          echo VITE_BROWSER=firefox > .env
-          yarn zip
+        run: yarn zip:firefox
       - uses: actions/upload-artifact@v4
         with:
           name: read-later

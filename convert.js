@@ -2,13 +2,8 @@
 
 import manifest from './src/manifest.js'
 import packageData from './package.json' assert { type: 'json' }
-const isDev = process.env.NODE_ENV === 'development'
 
-function generateRandomGeckoId() {
-  let randomId = (Math.random() + 1).toString(36).substring(2)
-  let newExtId = `${randomId}@_XPIPorter`
-  return newExtId
-}
+const isDev = process.env.NODE_ENV === 'development'
 
 export async function patchManifest() {
   const newExtId = `${packageData.name}${isDev ? '-dev' : ''}@${packageData.author}.com`
