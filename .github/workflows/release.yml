@@ -1,9 +1,9 @@
 name: Release
 on:
-  workflow_run:
-    workflows: ["Build"]
-    types:
-      - completed
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*'
 
 jobs:
   release:
@@ -19,14 +19,14 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: read-later
-          path: ./release
+          name: zip-extensions
+          path: ./package
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           body: ${{steps.github_release.outputs.changelog}}
-          files: ./release/*
+          files: ./package/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
