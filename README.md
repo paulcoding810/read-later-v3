@@ -114,7 +114,7 @@ Built with [create-chrome-ext](https://github.com/guocaoyi/create-chrome-ext)
 [Issues]: https://github.com/paulcoding810/read-later-v3/issues
 
 [Badge Commits]: https://img.shields.io/github/commit-activity/m/paulcoding810/read-later-v3?label=Commits
-[Badge Mozilla]: https://img.shields.io/amo/rating/read-it-later?label=Firefox
+[Badge Mozilla]: https://img.shields.io/amo/v/read-it-later
+[Badge Chrome]: https://img.shields.io/chrome-web-store/v/cbkpffbpdnkdlfdaoeakdelhmakefomb
 [Badge License]: https://img.shields.io/badge/License-MIT-blue.svg
-[Badge Chrome]: https://img.shields.io/chrome-web-store/rating/cbkpffbpdnkdlfdaoeakdelhmakefomb?label=Chrome
 [Badge Issues]: https://img.shields.io/github/issues/paulcoding810/read-later-v3/issues
