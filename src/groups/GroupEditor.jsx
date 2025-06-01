@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import closeIcon from '../assets/close.svg'
 import saveIcon from '../assets/save.svg'
-import { setValue } from '../utils/storage'
 
 export default function GroupEditor({ groups, setGroups, onCancel }) {
   const [text, setText] = useState(JSON.stringify(groups, null, 4))
@@ -10,7 +9,8 @@ export default function GroupEditor({ groups, setGroups, onCancel }) {
   function submit() {
     try {
       const newGroups = JSON.parse(text)
-      setValue({ groups: newGroups })
+      groupDB
+        .add(newGroups)
         .then(() => {
           setGroups(newGroups)
         })

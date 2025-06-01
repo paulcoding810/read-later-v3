@@ -30,10 +30,13 @@ export default {
       date: 1738596653853,
     },
   ],
-  groups: {
-    trending: [
-      'https://github.com/search?o=desc&q=stars%3A%3E%3D20+fork%3Atrue+language%3Akotlin&s=updated&type=Repositories',
-      'https://github.com/trending',
-    ],
-  },
+  groups: [
+    {
+      name: 'trending',
+      urls: [
+        'https://github.com/search?o=desc&q=stars%3A%3E%3D20+fork%3Atrue+language%3Akotlin&s=updated&type=Repositories',
+        'https://github.com/trending',
+      ],
+    },
+  ],
 }

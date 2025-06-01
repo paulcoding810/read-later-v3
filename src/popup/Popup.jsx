@@ -6,31 +6,20 @@ import emptyIcon from '../assets/empty.svg'
 import downIcon from '../assets/expand_circle_down.svg'
 import upIcon from '../assets/expand_circle_up.svg'
 import groupsIcon from '../assets/workspaces.svg'
-import { messages } from '../background/message'
 import SearchBar from '../components/SearchBar'
 import Tab from '../components/Tab'
 import Groups from '../groups/Groups'
+import { groupDB, readLaterDB } from '../helper'
 import '../tailwind.css'
 import { setBadge, setBadgeBackground } from '../utils/badge'
 import { save2Json } from '../utils/file'
-import { getValue, setValue } from '../utils/storage'
 import { getCurrentWindowTabs } from '../utils/tabs'
 
-const setStorageAndUpdateBadge = (newTabs) => {
-  setValue({
-    read_later: newTabs,
-  })
-    .then(() => {
-      setBadge(newTabs.length)
-      setBadgeBackground(colors.blue[500])
-    })
-    .catch((error) => {
-      console.error('setStorageAndUpdateBadge', error)
-    })
-}
-
 const exportJson = async () => {
-  save2Json(await getValue(null, {}))
+  save2Json({
+    read_later: await readLaterDB.getAll(),
+    groups: await groupDB.getAll(),
+  })
 }
 
 const copyTabUrl = async () => {
@@ -40,8 +29,7 @@ const copyTabUrl = async () => {
 }
 
 const getReadLaterDatabase = async () => {
-  const storage = await getValue('read_later', [])
-  return storage
+  return await readLaterDB.getAll()
 }
 
 export function Popup() {
@@ -70,11 +58,15 @@ export function Popup() {
 
   const removeTab = async (tab) => {
     setTabs(tabs.filter((t) => t !== tab))
+    await readLaterDB.delete(tab.id)
+    await updateBadge()
+    // chrome.runtime.sendMessage({ type: messages.REMOVE_TAB, tab })
+  }
 
-    const newTabs = db.filter((t) => t !== tab)
-    setStorageAndUpdateBadge(newTabs)
-
-    chrome.runtime.sendMessage({ type: messages.REMOVE_TAB, tab })
+  const updateBadge = async () => {
+    const count = await readLaterDB.count()
+    setBadge(count)
+    setBadgeBackground(colors.blue[500])
   }
 
   // init data from storage
