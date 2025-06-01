@@ -159,4 +159,11 @@ export default class IndexedDBWrapper {
       request.onerror = () => reject(request.error)
     })
   }
+
+  async close() {
+    if (this.db) {
+      this.db.close()
+      this.db = null
+    }
+  }
 }

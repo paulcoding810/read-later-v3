@@ -34,14 +34,39 @@ const syncStorageToDB = async () => {
   const storage = await chrome.storage.local.get()
   const { read_later: readLater, groups } = storage
   if (readLater) {
+    let set = new Set()
     for (const item of readLater) {
-      await readLaterDB.add(item)
+      if (set.has(item.url)) {
+        console.warn('Duplicate URL found in read later:', item.url)
+        continue
+      }
+      set.add(item.url)
+      try {
+        await readLaterDB.add(item)
+      } catch (error) {
+        console.error('Error adding item to read later:', item, error)
+        continue
+      }
     }
   }
   if (groups) {
-    for (const group of Object.keys(groups)) {
-      await groupDB.add({ name: group, urls: groups[group] })
+    for (const groupName of Object.keys(groups)) {
+      try {
+        await groupDB.add({ name: groupName, urls: groups[groupName] })
+      } catch (error) {
+        console.error('Error adding group:', groupName, error)
+        continue
+      }
     }
+  }
+}
+
+const checkAndSyncStorage = async () => {
+  const synced = (await chrome.storage.local.get({ synced: false })).synced
+  if (!synced) {
+    await syncStorageToDB()
+    console.log('Storage synced to DB')
+    await chrome.storage.local.set({ synced: true })
   }
 }
 
@@ -76,15 +101,6 @@ chrome.runtime.onInstalled.addListener(async () => {
     for (let index = 0; index < devDB.read_later.length; index += 1) {
       await readLaterDB.add(devDB.read_later[index])
     }
-  }
-
-  // sync
-  const synced = await chrome.storage.local.get({ synced: false })
-  if (!synced) {
-    await syncStorageToDB()
-    await updateBadge()
-    console.log('Storage synced to DB')
-    await chrome.storage.local.set({ synced: true })
   }
 })
 
@@ -142,6 +158,7 @@ chrome.commands.onCommand.addListener(async (command) => {
 // })
 
 const main = async () => {
+  checkAndSyncStorage()
   updateBadge()
 }
 

@@ -15,7 +15,7 @@ function openInNewTab() {
 }
 
 async function getGroupsDatabase() {
-  return groupDB.getAll().map(group => ({name: group.name, urls: group.urls})) // to avoid id field
+  return (await groupDB.getAll()).map((group) => ({ name: group.name, urls: group.urls })) // to avoid id field
 }
 
 export default function Groups({ setShowsGroups }) {
@@ -57,7 +57,7 @@ export default function Groups({ setShowsGroups }) {
         />
       ) : (
         <div className="relative m-4">
-          {groups.map(({name, urls}) => (
+          {groups.map(({ name, urls }) => (
             <Group key={name} {...{ name, urls }} />
           ))}
           <button
