@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import backIcon from '../assets/arrow_back.svg'
 import editIcon from '../assets/edit.svg'
 import openInNewIcon from '../assets/open_in_new.svg'
-import { getValue } from '../utils/storage'
+import { groupDB } from '../helper'
 import { createTab } from '../utils/tabs'
 import Group from './Group'
 import GroupEditor from './GroupEditor'
@@ -15,12 +15,11 @@ function openInNewTab() {
 }
 
 async function getGroupsDatabase() {
-  const storage = await getValue('groups', {})
-  return storage
+  return groupDB.getAll().map(group => ({name: group.name, urls: group.urls})) // to avoid id field
 }
 
 export default function Groups({ setShowsGroups }) {
-  const [groups, setGroups] = useState({})
+  const [groups, setGroups] = useState([])
   const [editing, setEditing] = useState(false)
 
   useEffect(() => {
@@ -58,7 +57,7 @@ export default function Groups({ setShowsGroups }) {
         />
       ) : (
         <div className="relative m-4">
-          {Object.entries(groups).map(([name, urls], index) => (
+          {groups.map(({name, urls}) => (
             <Group key={name} {...{ name, urls }} />
           ))}
           <button
