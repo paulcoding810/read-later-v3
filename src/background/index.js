@@ -24,6 +24,21 @@ async function tabExisted(url) {
   return Boolean(foundTab)
 }
 
+const syncStorageToDB = async () => {
+  const storage = await chrome.storage.local.get()
+  const { read_later: readLater, groups } = storage
+  if (readLater) {
+    for (const item of readLater) {
+      await readLaterDB.add(item)
+    }
+  }
+  if (groups) {
+    for (const group of Object.keys(groups)) {
+      await groupDB.add({ name: group, urls: groups[group] })
+    }
+  }
+}
+
 async function getAndSaveTabsToReadLater() {
   try {
     const tabs = await getCurrentWindowTabsInfo(true)
@@ -55,6 +70,14 @@ chrome.runtime.onInstalled.addListener(async () => {
     for (let index = 0; index < devDB.read_later.length; index += 1) {
       await readLaterDB.add(devDB.read_later[index])
     }
+  }
+
+  // sync
+  const synced = await chrome.storage.local.get({ synced: false })
+  if (!synced) {
+    await syncStorageToDB()
+    console.log('Storage synced to DB')
+    await chrome.storage.local.set({ synced: true })
   }
 })
 
