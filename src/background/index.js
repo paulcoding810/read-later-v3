@@ -11,6 +11,12 @@ function logError(err) {
   console.log('onError', err)
 }
 
+const updateBadge = async () => {
+  const count = await readLaterDB.count()
+  setBadge(String(count))
+  setBadgeBackground(colors.blue[500])
+}
+
 function logStorageChange(changes, areaName) {
   const changedItems = Object.keys(changes)
   changedItems.forEach((item) => {
@@ -76,6 +82,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   const synced = await chrome.storage.local.get({ synced: false })
   if (!synced) {
     await syncStorageToDB()
+    await updateBadge()
     console.log('Storage synced to DB')
     await chrome.storage.local.set({ synced: true })
   }
@@ -135,12 +142,7 @@ chrome.commands.onCommand.addListener(async (command) => {
 // })
 
 const main = async () => {
-  readLaterDB
-    .count()
-    .then((count) => {
-      setBadge(String(count))
-    })
-    .catch(logError)
+  updateBadge()
 }
 
 main()
