@@ -113,36 +113,38 @@ const AddGroupForm = ({ onSubmit, onCancel, onError }) => {
   }
 
   return (
-    <div className="absolute z-10 flex flex-col items-center flex-grow-0 p-4 rounded-sm bottom-8 left-8 right-8 bg-slate-400">
-      <h2 className="text-lg font-semibold">Add New Group</h2>
-      <input
-        type="text"
-        autoFocus
-        placeholder="Group Name"
-        className="w-full p-1 mb-2 border rounded"
-        onChange={(e) => setNewGroupName(e.target.value)}
-      />
-      <textarea
-        placeholder="URLs (one per line)"
-        className="w-full h-20 p-1 mb-2 border rounded resize-none"
-        onChange={(e) => setNewGroupUrls(e.target.value)}
-      />
-      <div className="flex flex-row gap-8">
-        <button
-          type="button"
-          onClick={submit}
-          className="p-1 text-white bg-blue-500 rounded hover:bg-blue-600"
-        >
-          Add Group
-        </button>
+    <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center bg-white/30 backdrop-blur-sm">
+      <div className="flex flex-col items-center self-center flex-grow-0 w-full p-4 mx-4 bg-blue-200 rounded">
+        <h2 className="text-lg font-semibold">Add New Group</h2>
+        <input
+          type="text"
+          autoFocus
+          placeholder="Group Name"
+          className="w-full p-1 mb-2 border rounded"
+          onChange={(e) => setNewGroupName(e.target.value)}
+        />
+        <textarea
+          placeholder="URLs (one per line)"
+          className="w-full h-20 p-1 mb-2 border rounded resize-none"
+          onChange={(e) => setNewGroupUrls(e.target.value)}
+        />
+        <div className="flex flex-row gap-8">
+          <button
+            type="button"
+            onClick={submit}
+            className="p-1 text-white bg-blue-500 rounded hover:bg-blue-600"
+          >
+            Add Group
+          </button>
 
-        <button
-          type="button"
-          onClick={onCancel}
-          className="p-1 text-white bg-red-500 rounded hover:bg-red-600"
-        >
-          Cancel
-        </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="p-1 text-white bg-red-500 rounded hover:bg-red-600"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   )

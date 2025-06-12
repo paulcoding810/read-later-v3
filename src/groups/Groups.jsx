@@ -45,7 +45,7 @@ export default function Groups({ setShowsGroups }) {
   }, [])
 
   return (
-    <div className="bg-neutral-50">
+    <div className="bg-neutral-50 min-h-[400px]">
       {setShowsGroups && (
         <div className="flex flex-row items-center flex-1 gap-2 px-4 py-2 text-white bg-blue-500">
           <button
