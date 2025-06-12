@@ -15,19 +15,37 @@ function openInNewTab() {
 }
 
 async function getGroupsDatabase() {
-  return (await groupDB.getAll()).map((group) => ({ name: group.name, urls: group.urls })) // to avoid id field
+  return await groupDB.getAll()
 }
 
 export default function Groups({ setShowsGroups }) {
   const [groups, setGroups] = useState([])
   const [editing, setEditing] = useState(false)
 
+  function backFromEditor() {
+    getGroupsDatabase().then(setGroups)
+    setEditing(false)
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === 'Escape') {
+      backFromEditor()
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
+
   useEffect(() => {
     getGroupsDatabase().then(setGroups)
   }, [])
 
   return (
-    <div>
+    <div className="bg-neutral-50">
       {setShowsGroups && (
         <div className="flex flex-row items-center flex-1 gap-2 px-4 py-2 text-white bg-blue-500">
           <button
@@ -51,9 +69,8 @@ export default function Groups({ setShowsGroups }) {
           groups={groups}
           setGroups={(newGroups) => {
             setGroups(newGroups)
-            setEditing(false)
           }}
-          onCancel={() => setEditing(false)}
+          goBack={backFromEditor}
         />
       ) : (
         <div className="relative m-4">
