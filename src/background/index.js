@@ -1,15 +1,20 @@
 import colors from 'tailwindcss/colors'
+import { groupDB, readLaterDB } from '../helper'
 import { setBadge, setBadgeBackground } from '../utils/badge'
-import { getValue, setValue } from '../utils/storage'
-import { createTab, getCurrentWindowTabsInfo } from '../utils/tabs'
+import { getCurrentWindowTabsInfo } from '../utils/tabs'
 import devDB from './devdb'
 import { commands, messages } from './message'
 
 const isProd = import.meta.env.PROD
-const setUrls = new Set()
 
 function logError(err) {
   console.log('onError', err)
+}
+
+const updateBadge = async () => {
+  const count = await readLaterDB.count()
+  setBadge(String(count))
+  setBadgeBackground(colors.blue[500])
 }
 
 function logStorageChange(changes, areaName) {
@@ -20,57 +25,90 @@ function logStorageChange(changes, areaName) {
   })
 }
 
-function tabExisted(newTab) {
-  return setUrls.has(newTab.url)
+async function tabExisted(url) {
+  const foundTab = await readLaterDB.getByIndex(url)
+  return Boolean(foundTab)
+}
+
+const syncStorageToDB = async () => {
+  const storage = await chrome.storage.local.get()
+  const { read_later: readLater, groups } = storage
+  if (readLater) {
+    let set = new Set()
+    for (const item of readLater) {
+      if (set.has(item.url)) {
+        console.warn('Duplicate URL found in read later:', item.url)
+        continue
+      }
+      set.add(item.url)
+      try {
+        await readLaterDB.add(item)
+      } catch (error) {
+        console.error('Error adding item to read later:', item, error)
+        continue
+      }
+    }
+  }
+  if (groups) {
+    for (const groupName of Object.keys(groups)) {
+      try {
+        await groupDB.add({ name: groupName, urls: groups[groupName] })
+      } catch (error) {
+        console.error('Error adding group:', groupName, error)
+        continue
+      }
+    }
+  }
+}
+
+const checkAndSyncStorage = async () => {
+  const synced = (await chrome.storage.local.get({ synced: false })).synced
+  if (!synced) {
+    await syncStorageToDB()
+    console.log('Storage synced to DB')
+    await chrome.storage.local.set({ synced: true })
+  }
 }
 
 async function getAndSaveTabsToReadLater() {
   try {
     const tabs = await getCurrentWindowTabsInfo(true)
-    console.log('Adding', tabs)
-    const db = (await getValue()).read_later ?? []
-
     for (let index = 0; index < tabs.length; index += 1) {
       const tab = tabs[index]
-      if (tabExisted(tab)) {
+      if (await tabExisted(tab.url)) {
         console.log('Tab existed', tab)
         setBadgeBackground(colors.orange[500])
       } else {
-        if (tab.id) {
-          setBadgeBackground(colors.green[500], tab.id)
-          delete tab.id
-        }
-        db.push(tab)
-        setUrls.add(tab.url)
+        // tab.id is returned by tabs api. In readLaterDB, id is auto-incremented
+        setBadgeBackground(colors.green[500], tab.id)
+        const { url, title, date } = tab
+        readLaterDB.add({ url, title, date })
       }
     }
 
-    await setValue({ read_later: db })
-    setBadge(String(db.length))
+    setBadge(await readLaterDB.count())
   } catch (error) {
     logError(error)
   }
 }
 
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(async () => {
   if (!isProd) {
-    setValue(devDB)
-      .then(() => {
-        console.log('Import devDB successfully')
-      })
-      .catch((error) => {
-        logError(`Failed to set devDB: ${error}`)
-      })
+    for (let group of devDB.groups) {
+      await groupDB.add(group)
+    }
+
+    for (let index = 0; index < devDB.read_later.length; index += 1) {
+      await readLaterDB.add(devDB.read_later[index])
+    }
   }
 })
 
 chrome.runtime.onMessage.addListener((request) => {
   switch (request.type) {
     case messages.REMOVE_TAB:
-      setUrls.delete(request.tab.url)
       break
     case messages.ADD_TAB:
-      setUrls.add(request.tab.url)
       break
     default:
       break
@@ -120,14 +158,8 @@ chrome.commands.onCommand.addListener(async (command) => {
 // })
 
 const main = async () => {
-  getValue('read_later', [])
-    .then((tabs) => {
-      setBadge(String(tabs.length))
-      tabs.forEach((tab) => {
-        setUrls.add(tab.url)
-      })
-    })
-    .catch(logError)
+  checkAndSyncStorage()
+  updateBadge()
 }
 
 main()
