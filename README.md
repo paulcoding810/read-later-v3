@@ -20,11 +20,11 @@ Read Later
 <a href="https://chromewebstore.google.com/detail/read-later/cbkpffbpdnkdlfdaoeakdelhmakefomb"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get Read Later for Chromium"></a>
 </p>
 
-***
+---
 
 Read Later is a browser extension to efficiently manage and save tabs for later reading
 
-***
+---
 
 ## ℹ️ About
 
@@ -109,10 +109,8 @@ Built with [create-chrome-ext](https://github.com/guocaoyi/create-chrome-ext)
 [Mozilla]: https://addons.mozilla.org/addon/read-it-later/
 [Chrome]: https://chromewebstore.google.com/detail/read-later/cbkpffbpdnkdlfdaoeakdelhmakefomb
 [License]: LICENSE.txt
-
 [Commit Rate]: https://github.com/paulcoding810/read-later-v3/commits/main
 [Issues]: https://github.com/paulcoding810/read-later-v3/issues
-
 [Badge Commits]: https://img.shields.io/github/commit-activity/m/paulcoding810/read-later-v3?label=Commits
 [Badge Mozilla]: https://img.shields.io/amo/v/read-it-later
 [Badge Chrome]: https://img.shields.io/chrome-web-store/v/cbkpffbpdnkdlfdaoeakdelhmakefomb
