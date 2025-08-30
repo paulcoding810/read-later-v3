@@ -104,15 +104,24 @@ chrome.runtime.onInstalled.addListener(async () => {
   }
 })
 
-chrome.runtime.onMessage.addListener((request) => {
+chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   switch (request.type) {
     case messages.REMOVE_TAB:
       break
     case messages.ADD_TAB:
+      getAndSaveTabsToReadLater()
+        .then(() => {
+          sendResponse({ success: true })
+        })
+        .catch((err) => {
+          logError(err)
+          sendResponse({ success: false, error: err.message })
+        })
       break
     default:
       break
   }
+  return true
 })
 
 chrome.action.setBadgeBackgroundColor({ color: 'blue' })

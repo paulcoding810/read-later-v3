@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import colors from 'tailwindcss/colors'
+import addIcon from '../assets/circle_plus.svg'
 import copyIcon from '../assets/copy.svg'
 import downloadIcon from '../assets/download.svg'
 import emptyIcon from '../assets/empty.svg'
 import downIcon from '../assets/expand_circle_down.svg'
 import upIcon from '../assets/expand_circle_up.svg'
 import groupsIcon from '../assets/workspaces.svg'
+import { messages } from '../background/message'
 import SearchBar from '../components/SearchBar'
 import Tab from '../components/Tab'
 import Groups from '../groups/Groups'
@@ -132,6 +134,25 @@ export function Popup() {
 
       {expanded && (
         <div className="absolute right-0 flex flex-col items-start gap-2 p-2 bg-white border border-blue-500 rounded shadow-lg top-8">
+          <button
+            title="Add This Tab"
+            onClick={() => {
+              chrome.runtime.sendMessage({ type: messages.ADD_TAB }, (response) => {
+                if (response?.success) {
+                  getDBAndSetTabs(query)
+                  setExpanded(false)
+                } else {
+                  console.error('failed to add tab', response?.error)
+                  setExpanded(false)
+                }
+              })
+            }}
+            className="flex flex-row items-center w-full gap-1 p-1 hover:bg-blue-200"
+          >
+            <img className="w-4 h-4" src={addIcon} alt="Add" />
+            <span>Add This Tab</span>
+          </button>
+
           <button
             title="Export Data"
             onClick={() => {
