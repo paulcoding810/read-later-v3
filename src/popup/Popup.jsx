@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import colors from 'tailwindcss/colors'
+import packageData from '../../package.json'
 import addIcon from '../assets/circle_plus.svg'
 import copyIcon from '../assets/copy.svg'
 import downloadIcon from '../assets/download.svg'
@@ -176,6 +177,7 @@ export function Popup() {
             <img className="w-4 h-4" src={copyIcon} alt="Copy" />
             <span>Copy tabs urls</span>
           </button>
+          <div className="flex self-center">{packageData.version}</div>
         </div>
       )}
     </div>

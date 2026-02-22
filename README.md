@@ -45,7 +45,8 @@ Older versions:
 ### Tab Management
 
 - Quick save current tab with `Ctrl + B`
-- Open saved tabs in new window. `Cmd/Ctrl/Shift + Click` to also remove tab from reading list
+- Open tab in incognito mode with `Shift + Click`
+- Open saved tabs in new window. `Cmd/Ctrl + Click` to also remove tab from reading list
 
 ### Group Organization
 

@@ -77,7 +77,11 @@ export function createTabs(urls) {
  * @param url tab to open
  * @param active new tab is focused if active = true
  */
-export function createTab(url, active = false) {
+export function createTab(url, active = false, incognito = false) {
+  if (incognito) {
+    chrome.windows.create({ url, incognito, focused: true })
+    return
+  }
   chrome.tabs.query(
     {
       active: true,
@@ -149,4 +153,3 @@ export async function getCurrentWindowTabsInfo(highlighted) {
   const tabs = await getCurrentWindowTabs(highlighted)
   return tabs.filter(isTabValid).map(parseTabInfo)
 }
-
