@@ -19,10 +19,18 @@ import { save2Json } from '../utils/file'
 import { getCurrentWindowTabs } from '../utils/tabs'
 
 const exportJson = async () => {
-  save2Json({
-    read_later: await readLaterDB.getAll(),
-    groups: await groupDB.getAll(),
-  })
+  try {
+    save2Json({
+      read_later: await readLaterDB.getAll(),
+      groups: await groupDB.getAll(),
+    })
+  } catch {
+    chrome.runtime.sendMessage({ type: messages.EXPORT_DATA }, (response) => {
+      if (response?.success) {
+        save2Json(response.data)
+      }
+    })
+  }
 }
 
 const copyTabUrl = async () => {
@@ -32,7 +40,47 @@ const copyTabUrl = async () => {
 }
 
 const getReadLaterDatabase = async () => {
-  return await readLaterDB.getAll()
+  try {
+    return await readLaterDB.getAll()
+  } catch {
+    return await new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: messages.GET_ALL_TABS }, (response) => {
+        if (response?.success) {
+          resolve(response.tabs)
+        } else {
+          resolve([])
+        }
+      })
+    })
+  }
+}
+
+const removeTabFromDB = async (tabId) => {
+  try {
+    await readLaterDB.delete(tabId)
+  } catch {
+    await new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: messages.REMOVE_TAB, tab: { id: tabId } }, (response) => {
+        resolve(response?.success)
+      })
+    })
+  }
+}
+
+const getCount = async () => {
+  try {
+    return await readLaterDB.count()
+  } catch {
+    return await new Promise((resolve) => {
+      chrome.runtime.sendMessage({ type: messages.GET_COUNT }, (response) => {
+        if (response?.success) {
+          resolve(response.count)
+        } else {
+          resolve(0)
+        }
+      })
+    })
+  }
 }
 
 export function Popup() {
@@ -61,13 +109,12 @@ export function Popup() {
 
   const removeTab = async (tab) => {
     setTabs(tabs.filter((t) => t !== tab))
-    await readLaterDB.delete(tab.id)
+    await removeTabFromDB(tab.id)
     await updateBadge()
-    // chrome.runtime.sendMessage({ type: messages.REMOVE_TAB, tab })
   }
 
   const updateBadge = async () => {
-    const count = await readLaterDB.count()
+    const count = await getCount()
     setBadge(count)
     setBadgeBackground(colors.blue[500])
   }
