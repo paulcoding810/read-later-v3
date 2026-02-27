@@ -104,6 +104,10 @@ chrome.runtime.onInstalled.addListener(async () => {
   }
 })
 
+chrome.runtime.onStartup.addListener(() => {
+  updateBadge()
+})
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.type) {
     case messages.REMOVE_TAB:
