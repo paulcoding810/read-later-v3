@@ -104,14 +104,60 @@ chrome.runtime.onInstalled.addListener(async () => {
   }
 })
 
-chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
+chrome.runtime.onStartup.addListener(() => {
+  updateBadge()
+})
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   switch (request.type) {
     case messages.REMOVE_TAB:
+      readLaterDB
+        .delete(request.tab.id)
+        .then(() => {
+          updateBadge()
+          sendResponse({ success: true })
+        })
+        .catch((err) => {
+          logError(err)
+          sendResponse({ success: false, error: err.message })
+        })
       break
     case messages.ADD_TAB:
       getAndSaveTabsToReadLater()
         .then(() => {
           sendResponse({ success: true })
+        })
+        .catch((err) => {
+          logError(err)
+          sendResponse({ success: false, error: err.message })
+        })
+      break
+    case messages.GET_ALL_TABS:
+      readLaterDB
+        .getAll()
+        .then((tabs) => {
+          sendResponse({ success: true, tabs })
+        })
+        .catch((err) => {
+          logError(err)
+          sendResponse({ success: false, error: err.message })
+        })
+      break
+    case messages.GET_COUNT:
+      readLaterDB
+        .count()
+        .then((count) => {
+          sendResponse({ success: true, count })
+        })
+        .catch((err) => {
+          logError(err)
+          sendResponse({ success: false, error: err.message })
+        })
+      break
+    case messages.EXPORT_DATA:
+      Promise.all([readLaterDB.getAll(), groupDB.getAll()])
+        .then(([readLater, groups]) => {
+          sendResponse({ success: true, data: { read_later: readLater, groups } })
         })
         .catch((err) => {
           logError(err)
