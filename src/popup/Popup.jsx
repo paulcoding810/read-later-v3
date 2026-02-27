@@ -12,25 +12,17 @@ import { messages } from '../background/message'
 import SearchBar from '../components/SearchBar'
 import Tab from '../components/Tab'
 import Groups from '../groups/Groups'
-import { groupDB, readLaterDB } from '../helper'
 import '../tailwind.css'
 import { setBadge, setBadgeBackground } from '../utils/badge'
 import { save2Json } from '../utils/file'
 import { getCurrentWindowTabs } from '../utils/tabs'
 
 const exportJson = async () => {
-  try {
-    save2Json({
-      read_later: await readLaterDB.getAll(),
-      groups: await groupDB.getAll(),
-    })
-  } catch {
-    chrome.runtime.sendMessage({ type: messages.EXPORT_DATA }, (response) => {
-      if (response?.success) {
-        save2Json(response.data)
-      }
-    })
-  }
+  chrome.runtime.sendMessage({ type: messages.EXPORT_DATA }, (response) => {
+    if (response?.success) {
+      save2Json(response.data)
+    }
+  })
 }
 
 const copyTabUrl = async () => {
@@ -40,47 +32,35 @@ const copyTabUrl = async () => {
 }
 
 const getReadLaterDatabase = async () => {
-  try {
-    return await readLaterDB.getAll()
-  } catch {
-    return await new Promise((resolve) => {
-      chrome.runtime.sendMessage({ type: messages.GET_ALL_TABS }, (response) => {
-        if (response?.success) {
-          resolve(response.tabs)
-        } else {
-          resolve([])
-        }
-      })
+  return await new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: messages.GET_ALL_TABS }, (response) => {
+      if (response?.success) {
+        resolve(response.tabs)
+      } else {
+        resolve([])
+      }
     })
-  }
+  })
 }
 
 const removeTabFromDB = async (tabId) => {
-  try {
-    await readLaterDB.delete(tabId)
-  } catch {
-    await new Promise((resolve) => {
-      chrome.runtime.sendMessage({ type: messages.REMOVE_TAB, tab: { id: tabId } }, (response) => {
-        resolve(response?.success)
-      })
+  await new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: messages.REMOVE_TAB, tab: { id: tabId } }, (response) => {
+      resolve(response?.success)
     })
-  }
+  })
 }
 
 const getCount = async () => {
-  try {
-    return await readLaterDB.count()
-  } catch {
-    return await new Promise((resolve) => {
-      chrome.runtime.sendMessage({ type: messages.GET_COUNT }, (response) => {
-        if (response?.success) {
-          resolve(response.count)
-        } else {
-          resolve(0)
-        }
-      })
+  return await new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: messages.GET_COUNT }, (response) => {
+      if (response?.success) {
+        resolve(response.count)
+      } else {
+        resolve(0)
+      }
     })
-  }
+  })
 }
 
 export function Popup() {
