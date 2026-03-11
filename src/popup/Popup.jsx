@@ -77,13 +77,9 @@ export function Popup() {
       let tabs = data
       if (query)
         tabs = data.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
-      // delay a bit for better ux
-      setTimeout(() => {
-        setTabs(tabs.toReversed())
-      }, 50)
+      setTabs(tabs.toReversed())
     } catch (error) {
       console.error('failed to get data', error)
-    } finally {
     }
   }, [])
 
