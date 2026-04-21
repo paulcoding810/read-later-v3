@@ -1,3 +1,4 @@
+import loadingIcon from '../assets/loading.svg'
 import { useCallback, useEffect, useState } from 'react'
 import colors from 'tailwindcss/colors'
 import packageData from '../../package.json'
@@ -31,9 +32,9 @@ const copyTabUrl = async () => {
   navigator.clipboard.writeText(JSON.stringify(urls))
 }
 
-const getReadLaterDatabase = async () => {
+const getReadLaterDatabase = async (query) => {
   return await new Promise((resolve) => {
-    chrome.runtime.sendMessage({ type: messages.GET_ALL_TABS }, (response) => {
+    chrome.runtime.sendMessage({ type: messages.SEARCH_TABS, query }, (response) => {
       if (response?.success) {
         resolve(response.tabs)
       } else {
@@ -65,21 +66,20 @@ const getCount = async () => {
 
 export function Popup() {
   const [showsGroups, setShowsGroups] = useState(false)
-  const [db, setDb] = useState([])
   const [tabs, setTabs] = useState([])
   const [query, setQuery] = useState('')
   const [expanded, setExpanded] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const getDBAndSetTabs = useCallback(async (query) => {
+    setIsLoading(true)
     try {
-      const data = await getReadLaterDatabase()
-      setDb(data)
-      let tabs = data
-      if (query)
-        tabs = data.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
-      setTabs(tabs.toReversed())
+      const data = await getReadLaterDatabase(query)
+      setTabs(data.toReversed())
     } catch (error) {
       console.error('failed to get data', error)
+    } finally {
+      setIsLoading(false)
     }
   }, [])
 
@@ -95,20 +95,9 @@ export function Popup() {
     setBadgeBackground(colors.blue[500])
   }
 
-  // init data from storage
-  useEffect(() => {
-    getDBAndSetTabs('')
-  }, [])
-
   // debounce query
   useEffect(() => {
-    // when user clear the search bar, show all tabs again (still need to call getDBAndSetTabs)
-    if (query === '') setTabs(db.toReversed())
-
-    const timeout = setTimeout(() => {
-      getDBAndSetTabs(query)
-    }, 600)
-    return () => clearTimeout(timeout)
+    getDBAndSetTabs(query)
   }, [query])
 
   if (showsGroups) return <Groups {...{ setShowsGroups }} />
@@ -141,31 +130,37 @@ export function Popup() {
         </button>
       </div>
 
-      {tabs.length === 0 && (
-        <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
-          <img src={emptyIcon} alt="Empty" className="w-16 h-16 opacity-50" />
-          <div className="text-sm text-gray-600">
-            {query ? (
-              <span>No results found for "{query}"</span>
-            ) : (
-              <div className="flex flex-col gap-1">
-                <span>No saved tabs yet</span>
-                <span className="text-xs text-gray-400">
-                  Press <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 rounded border">Ctrl</kbd>{' '}
-                  + <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 rounded border">B</kbd> to add
-                  the current tab
-                </span>
+      {isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <img className="w-8 h-8 animate-spin" src={loadingIcon} alt="Loading" />
+        </div>
+      ) : (
+        <div className={expanded ? 'pointer-events-none opacity-50' : ''}>
+          {tabs.length === 0 && (
+            <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
+              <img src={emptyIcon} alt="Empty" className="w-16 h-16 opacity-50" />
+              <div className="text-sm text-gray-600">
+                {query ? (
+                  <span>No results found for "{query}"</span>
+                ) : (
+                  <div className="flex flex-col gap-1">
+                    <span>No saved tabs yet</span>
+                    <span className="text-xs text-gray-400">
+                      Press{' '}
+                      <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 rounded border">Ctrl</kbd> +{' '}
+                      <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 rounded border">B</kbd> to
+                      add the current tab
+                    </span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+          {tabs.map((tab, index) => (
+            <Tab key={index} {...tab} onRemove={() => removeTab(tab)} />
+          ))}
         </div>
       )}
-
-      <div className={expanded ? 'pointer-events-none opacity-50' : ''}>
-        {tabs.map((tab, index) => (
-          <Tab key={index} {...tab} onRemove={() => removeTab(tab)} />
-        ))}
-      </div>
 
       {expanded && (
         <div className="absolute z-50 flex flex-col items-stretch gap-1 p-2 bg-white border border-gray-200 rounded-lg shadow-xl right-2 top-14">

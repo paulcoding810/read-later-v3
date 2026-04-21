@@ -7,6 +7,7 @@ export const messages = {
   EXPORT_DATA: 'export_data',
   OPEN_LINK: 'open_link',
   OPEN_SELECTED_TEXT: 'open_selected_text',
+  SEARCH_TABS: 'search_tabs',
 }
 
 export const commands = {

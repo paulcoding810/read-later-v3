@@ -1,3 +1,4 @@
+import Fuse from 'fuse.js'
 import colors from 'tailwindcss/colors'
 import { groupDB, readLaterDB } from '../helper'
 import { setBadge, setBadgeBackground } from '../utils/badge'
@@ -6,6 +7,28 @@ import devDB from './devdb'
 import { commands, messages } from './message'
 
 const isProd = import.meta.env.PROD
+
+let fuseInstance = null
+
+async function initFuse() {
+  const tabs = await readLaterDB.getAll()
+  fuseInstance = new Fuse(tabs, {
+    keys: ['title', 'url'],
+    threshold: 0.4,
+  })
+}
+
+function updateFuse(tab) {
+  if (fuseInstance) {
+    fuseInstance.add(tab)
+  }
+}
+
+function removeFromFuse(tab) {
+  if (fuseInstance) {
+    fuseInstance.remove((t) => t.id === tab.id)
+  }
+}
 
 function logError(err) {
   console.log('onError', err)
@@ -68,6 +91,7 @@ const checkAndSyncStorage = async () => {
     console.log('Storage synced to DB')
     await chrome.storage.local.set({ synced: true })
   }
+  await initFuse()
 }
 
 async function getAndSaveTabsToReadLater() {
@@ -79,10 +103,10 @@ async function getAndSaveTabsToReadLater() {
         console.log('Tab existed', tab)
         setBadgeBackground(colors.orange[500])
       } else {
-        // tab.id is returned by tabs api. In readLaterDB, id is auto-incremented
         setBadgeBackground(colors.green[500], tab.id)
         const { url, title, date } = tab
-        readLaterDB.add({ url, title, date })
+        const addedTab = await readLaterDB.add({ url, title, date })
+        updateFuse(addedTab)
       }
     }
 
@@ -114,6 +138,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       readLaterDB
         .delete(request.tab.id)
         .then(() => {
+          removeFromFuse(request.tab)
           updateBadge()
           sendResponse({ success: true })
         })
@@ -148,6 +173,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         .count()
         .then((count) => {
           sendResponse({ success: true, count })
+        })
+        .catch((err) => {
+          logError(err)
+          sendResponse({ success: false, error: err.message })
+        })
+      break
+    case messages.SEARCH_TABS:
+      readLaterDB
+        .getAll()
+        .then((tabs) => {
+          const query = request.query
+          if (!query) {
+            sendResponse({ success: true, tabs })
+          } else if (fuseInstance) {
+            const results = fuseInstance.search(query).map((result) => result.item)
+            sendResponse({ success: true, tabs: results })
+          } else {
+            const fuse = new Fuse(tabs, {
+              keys: ['title', 'url'],
+              threshold: 0.4,
+            })
+            const results = fuse.search(query).map((result) => result.item)
+            sendResponse({ success: true, tabs: results })
+          }
         })
         .catch((err) => {
           logError(err)

@@ -32,7 +32,10 @@ export default function Tab({ title, url, onRemove }) {
     >
       <img className="flex-shrink-0 w-6 h-6" src={getIcon(url)} alt="" />
       <div className="flex-1 min-w-0">
-        <div className="overflow-hidden text-sm font-medium text-gray-900 text-ellipsis whitespace-nowrap">
+        <div
+          title={title}
+          className="overflow-hidden text-sm font-medium text-gray-900 text-ellipsis whitespace-nowrap"
+        >
           {title}
         </div>
         <div className="overflow-hidden text-xs text-gray-500 text-ellipsis whitespace-nowrap">

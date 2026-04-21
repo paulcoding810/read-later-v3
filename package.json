@@ -25,6 +25,7 @@
     "zip:firefox": "export BROWSER=firefox && yarn build && node src/zip.js"
   },
   "dependencies": {
+    "fuse.js": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
