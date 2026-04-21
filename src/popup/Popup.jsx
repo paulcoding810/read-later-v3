@@ -201,8 +201,9 @@ export function Popup() {
             <span>Copy All URLs</span>
           </button>
 
+          {/* custom firefox version */}
           <div className="pt-2 mt-1 text-xs text-center text-gray-400 border-t">
-            v{packageData.version}
+            v{'3' + packageData.version.slice(1)}
           </div>
         </div>
       )}
