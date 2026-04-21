@@ -14,7 +14,8 @@ export default function Tab({ title, url, onRemove }) {
     }
   }
 
-  const handleCopy = async () => {
+  const handleCopy = async (e) => {
+    e.stopPropagation()
     try {
       await navigator.clipboard.writeText(url)
       setIsCopied(true)
@@ -26,35 +27,39 @@ export default function Tab({ title, url, onRemove }) {
 
   return (
     <div
-      className="flex flex-row items-center gap-1 p-2 mb-1 text-black border rounded cursor-pointer hover:bg-blue-200 active:bg-blue-500"
+      className="relative flex flex-row items-center gap-2 p-2 mb-1 text-black transition-colors border rounded cursor-pointer group hover:bg-gray-100 active:bg-blue-500"
       onClick={handleClick}
     >
-      <img className="w-8 h-8" src={getIcon(url)} alt={title} />
-      <span className="flex-1 overflow-hidden text-ellipsis break-words text-[8px] line-clamp-2 text-black">
-        {title}
-      </span>
-      <button
-        className="p-1 text-blue-500 rounded cursor-default hover:bg-blue-200 active:bg-blue-500"
-        onClick={(e) => {
-          e.stopPropagation()
-          handleCopy()
-        }}
-      >
-        {isCopied ? (
-          <img className="text-green-500" src={checkIcon} alt="Copied" title="Copied" />
-        ) : (
-          <img src={copyIcon} alt="Copy URL" title="Copy URL" />
-        )}
-      </button>
-      <button
-        className="p-1 text-red-500 rounded cursor-default hover:bg-red-200 active:bg-red-500"
-        onClick={(e) => {
-          e.stopPropagation()
-          onRemove()
-        }}
-      >
-        <img src={closeIcon} alt="Remove Tab" title="Remove Tab" />
-      </button>
+      <img className="flex-shrink-0 w-6 h-6" src={getIcon(url)} alt="" />
+      <div className="flex-1 min-w-0">
+        <div className="overflow-hidden text-sm font-medium text-gray-900 text-ellipsis whitespace-nowrap">
+          {title}
+        </div>
+        <div className="overflow-hidden text-xs text-gray-500 text-ellipsis whitespace-nowrap">
+          {url}
+        </div>
+      </div>
+      <div className="absolute flex gap-1 opacity-0 top-1 right-1 group-hover:opacity-100">
+        <button
+          className="p-1 text-gray-400 transition-all bg-white rounded hover:bg-blue-100 hover:text-blue-600"
+          onClick={handleCopy}
+        >
+          {isCopied ? (
+            <img className="w-4 h-4" src={checkIcon} alt="Copied" title="Copied" />
+          ) : (
+            <img className="w-4 h-4" src={copyIcon} alt="Copy URL" title="Copy URL" />
+          )}
+        </button>
+        <button
+          className="p-1 text-gray-400 transition-all bg-white rounded hover:bg-red-100 hover:text-red-600"
+          onClick={(e) => {
+            e.stopPropagation()
+            onRemove()
+          }}
+        >
+          <img className="w-4 h-4" src={closeIcon} alt="Remove Tab" title="Remove Tab" />
+        </button>
+      </div>
     </div>
   )
 }

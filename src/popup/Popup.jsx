@@ -114,93 +114,101 @@ export function Popup() {
   if (showsGroups) return <Groups {...{ setShowsGroups }} />
 
   return (
-    <div className="flex flex-col w-full gap-2">
-      <div className="flex flex-row items-center h-8 gap-1">
-        <SearchBar {...{ query, setQuery }} />
+    <div className="flex flex-col w-full gap-2 p-2 bg-white">
+      <div className="sticky top-0 z-10 flex flex-row items-center gap-2 pb-2 bg-white">
+        <div className="flex-1">
+          <SearchBar {...{ query, setQuery }} />
+        </div>
+        <button
+          title="More"
+          onClick={() => setExpanded(!expanded)}
+          className={`flex items-center justify-center w-9 h-9 p-1.5 rounded-lg border-2 transition-colors ${
+            expanded ? 'bg-blue-200 border-blue-500' : 'border-gray-300 hover:bg-gray-100'
+          }`}
+        >
+          <img src={expanded ? upIcon : downIcon} alt="More" className="w-5 h-5" />
+        </button>
         <button
           title="Groups"
           onClick={() => setShowsGroups(!showsGroups)}
-          className="flex items-center justify-center w-8 h-8 p-1 border-2 border-blue-500 rounded hover:bg-blue-200"
+          className={`flex items-center justify-center w-9 h-9 p-1.5 rounded-lg border-2 transition-colors ${
+            showsGroups
+              ? 'bg-blue-200 border-blue-500 text-white'
+              : 'border-gray-300 hover:bg-gray-100'
+          }`}
         >
-          <img src={groupsIcon} alt="Group" />
-        </button>
-        <button
-          title="More"
-          onClick={() => {
-            setExpanded(!expanded)
-          }}
-          className="flex items-center justify-center w-8 h-8 p-1 border-2 border-blue-500 rounded hover:bg-blue-200"
-        >
-          <img src={expanded ? upIcon : downIcon} alt="More" />
+          <img src={groupsIcon} alt="Groups" className="w-5 h-5" />
         </button>
       </div>
-      {tabs.length == 0 && (
-        <div className="flex flex-col self-center gap-2 m-4 text-center placeholder:flex-col">
-          <img
-            src={emptyIcon}
-            alt="No results found."
-            className="w-[100px] h-[100px] self-center"
-          />
-          {query ? (
-            <span>No results found for "{query}"</span>
-          ) : (
-            <span>
-              press <code className="mx-1">Ctrl+b</code>to add new tabs!
-            </span>
-          )}
+
+      {tabs.length === 0 && (
+        <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
+          <img src={emptyIcon} alt="Empty" className="w-16 h-16 opacity-50" />
+          <div className="text-sm text-gray-600">
+            {query ? (
+              <span>No results found for "{query}"</span>
+            ) : (
+              <div className="flex flex-col gap-1">
+                <span>No saved tabs yet</span>
+                <span className="text-xs text-gray-400">
+                  Press <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 rounded border">Ctrl</kbd>{' '}
+                  + <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 rounded border">B</kbd> to add
+                  the current tab
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       )}
-      <div className={expanded ? 'pointer-events-none' : ''}>
+
+      <div className={expanded ? 'pointer-events-none opacity-50' : ''}>
         {tabs.map((tab, index) => (
           <Tab key={index} {...tab} onRemove={() => removeTab(tab)} />
         ))}
       </div>
 
       {expanded && (
-        <div className="absolute right-0 flex flex-col items-start gap-2 p-2 bg-white border border-blue-500 rounded shadow-lg top-8">
+        <div className="absolute z-50 flex flex-col items-stretch gap-1 p-2 bg-white border border-gray-200 rounded-lg shadow-xl right-2 top-14">
           <button
-            title="Add This Tab"
             onClick={() => {
               chrome.runtime.sendMessage({ type: messages.ADD_TAB }, (response) => {
                 if (response?.success) {
                   getDBAndSetTabs(query)
-                  setExpanded(false)
-                } else {
-                  console.error('failed to add tab', response?.error)
-                  setExpanded(false)
                 }
+                setExpanded(false)
               })
             }}
-            className="flex flex-row items-center w-full gap-1 p-1 hover:bg-blue-200"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded hover:bg-blue-50 hover:text-blue-600"
           >
-            <img className="w-4 h-4" src={addIcon} alt="Add" />
-            <span>Add This Tab</span>
+            <img className="w-4 h-4" src={addIcon} alt="" />
+            <span>Add Current Tab</span>
           </button>
 
           <button
-            title="Export Data"
             onClick={() => {
               exportJson()
               setExpanded(false)
             }}
-            className="flex flex-row items-center w-full gap-1 p-1 hover:bg-blue-200"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded hover:bg-blue-50 hover:text-blue-600"
           >
-            <img className="w-4 h-4" src={downloadIcon} alt="Download" />
+            <img className="w-4 h-4" src={downloadIcon} alt="" />
             <span>Export Data</span>
           </button>
 
           <button
-            title="Copy tabs urls"
             onClick={() => {
               copyTabUrl()
               setExpanded(false)
             }}
-            className="flex flex-row items-center w-full gap-1 p-1 hover:bg-blue-200"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded hover:bg-blue-50 hover:text-blue-600"
           >
-            <img className="w-4 h-4" src={copyIcon} alt="Copy" />
-            <span>Copy tabs urls</span>
+            <img className="w-4 h-4" src={copyIcon} alt="" />
+            <span>Copy All URLs</span>
           </button>
-          <div className="flex self-center">{packageData.version}</div>
+
+          <div className="pt-2 mt-1 text-xs text-center text-gray-400 border-t">
+            v{packageData.version}
+          </div>
         </div>
       )}
     </div>
