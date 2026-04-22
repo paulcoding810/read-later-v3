@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import closeIcon from '../assets/close.svg'
 import copyIcon from '../assets/copy.svg'
 import checkIcon from '../assets/check.svg'
@@ -6,6 +6,11 @@ import { createTab, getIcon } from '../utils/tabs'
 
 export default function Tab({ title, url, onRemove }) {
   const [isCopied, setIsCopied] = useState(false)
+  const [icon, setIcon] = useState('')
+
+  useEffect(() => {
+    getIcon(url).then(setIcon)
+  }, [url])
 
   const handleClick = (event) => {
     createTab(url, false, event.shiftKey)
@@ -30,7 +35,7 @@ export default function Tab({ title, url, onRemove }) {
       className="relative flex flex-row items-center gap-2 p-2 mb-1 text-black transition-colors border rounded cursor-pointer group hover:bg-gray-100 active:bg-blue-500"
       onClick={handleClick}
     >
-      <img className="flex-shrink-0 w-6 h-6" src={getIcon(url)} alt="" />
+      <img className="flex-shrink-0 w-6 h-6" src={icon} alt="" />
       <div className="flex-1 min-w-0">
         <div
           title={title}

@@ -27,6 +27,10 @@ const groupDB = new IndexedDBWrapper('Group', 'groups', 1, [
   { name: groupIndexKey, keyPath: 'name', options: { unique: true } },
 ])
 
+const iconCacheDB = new IndexedDBWrapper('IconCache', 'icons', 1, [
+  { name: 'domainIndex', keyPath: 'domain', options: { unique: true } },
+])
+
 async function syncStorageToDB() {
   const storage = await chrome.storage.local.get()
 
@@ -45,7 +49,8 @@ async function syncStorageToDB() {
   }
 }
 
-export { groupDB, readLaterDB, syncStorageToDB }
+export { groupDB, readLaterDB, iconCacheDB, syncStorageToDB }
 
 globalThis['readLaterDB'] = readLaterDB
+globalThis['groupDB'] = groupDB
 globalThis['groupDB'] = groupDB

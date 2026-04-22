@@ -1,4 +1,35 @@
+import { iconCacheDB } from '../helper'
 import { isURL } from './url'
+
+async function getCachedIcon(domain) {
+  try {
+    await iconCacheDB.open()
+    const cached = await iconCacheDB.getByIndex(domain)
+    if (cached) {
+      const isExpired = Date.now() - cached.timestamp > cached.ttl
+      if (isExpired) {
+        await iconCacheDB.delete(cached.id)
+        return null
+      }
+      const blob = new Blob([cached.data], { type: 'image/png' })
+      return URL.createObjectURL(blob)
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+const ONE_MONTH = 30 * 24 * 60 * 60 * 1000
+
+async function setCachedIcon(domain, blobData, ttl = ONE_MONTH) {
+  try {
+    const arrayBuffer = await blobData.arrayBuffer()
+    await iconCacheDB.add({ domain, data: arrayBuffer, timestamp: Date.now(), ttl })
+  } catch {
+    // Silently fail
+  }
+}
 
 /* tabs */
 export function saveTabs() {
@@ -125,11 +156,20 @@ export function updateUrl(url) {
   })
 }
 
-export function getIcon(url) {
+export async function getIcon(url) {
   try {
     const { origin } = new URL(url)
-    const icon = `https://www.google.com/s2/favicons?sz=64&domain=${origin}`
-    return icon
+    const domain = origin.replace('https://', '').replace('http://', '')
+
+    const cached = await getCachedIcon(domain)
+    if (cached) return cached
+
+    const iconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${origin}`
+    const response = await fetch(iconUrl)
+    const blob = await response.blob()
+    await setCachedIcon(domain, blob)
+    const cachedUrl = await getCachedIcon(domain)
+    return cachedUrl || iconUrl
   } catch (error) {
     console.error('fail to get icon', error)
     return 'https://www.google.com/s2/favicons?sz=64&domain=github.com'
