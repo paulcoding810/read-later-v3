@@ -35,9 +35,7 @@ export default function Groups({ setShowsGroups }) {
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown)
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-    }
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
   useEffect(() => {
@@ -46,43 +44,43 @@ export default function Groups({ setShowsGroups }) {
 
   return (
     <div className="bg-neutral-50 min-h-[400px]">
-      {setShowsGroups && (
-        <div className="flex flex-row items-center flex-1 gap-2 px-4 py-2 text-white bg-blue-500">
+      <div className="flex items-center gap-2 px-4 py-2 text-white bg-blue-500">
+        {setShowsGroups && (
           <button
             onClick={() => setShowsGroups(false)}
-            className="px-1 py-1 bg-transparent border-none rounded outline-none hover:bg-blue-200"
+            className="p-1 rounded outline-none hover:bg-blue-400"
           >
-            <img src={backIcon} alt="Back to tabs" />
+            <img src={backIcon} alt="Back" />
           </button>
-          <span className="text-lg font-bold">Groups</span>
-          <div className="flex flex-1" />
+        )}
+        <span className="text-lg font-bold">Groups</span>
+        <div className="flex-1" />
+        {!editing && (
           <button
-            onClick={openInNewTab}
-            className="px-1 py-1 bg-transparent border-none rounded outline-none hover:bg-blue-200"
+            onClick={() => setEditing(true)}
+            className="flex items-center gap-1 px-2 py-1 text-sm rounded hover:bg-blue-400"
           >
-            <img src={openInNewIcon} alt="Open in new tab" />
+            <img src={editIcon} alt="" className="w-4 h-4" />
+            Edit
           </button>
-        </div>
-      )}
+        )}
+        <button onClick={openInNewTab} className="p-1 rounded outline-none hover:bg-blue-400">
+          <img src={openInNewIcon} alt="Open in new tab" />
+        </button>
+      </div>
       {editing ? (
         <GroupEditor
           groups={groups}
-          setGroups={(newGroups) => {
-            setGroups(newGroups)
-          }}
+          setGroups={(newGroups) => setGroups(newGroups)}
           goBack={backFromEditor}
         />
+      ) : groups.length === 0 ? (
+        <div className="flex items-center justify-center h-48 text-gray-400">No groups yet.</div>
       ) : (
-        <div className="relative m-4">
+        <div className="p-4 space-y-3">
           {groups.map(({ name, urls }) => (
             <Group key={name} {...{ name, urls }} />
           ))}
-          <button
-            onClick={() => setEditing(true)}
-            className="absolute top-0 right-0 p-1 rounded hover:bg-blue-200"
-          >
-            <img src={editIcon} alt="Edit" />
-          </button>
         </div>
       )}
     </div>
