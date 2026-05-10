@@ -8,26 +8,26 @@ import { commands, messages } from './message'
 
 const isProd = import.meta.env.PROD
 
-let fuseInstance = null
+let fuse = new Fuse([], {
+  keys: ['title', 'url'],
+  threshold: 0.4,
+})
 
 async function initFuse() {
   const tabs = await readLaterDB.getAll()
-  fuseInstance = new Fuse(tabs, {
+  fuse = new Fuse(tabs, {
     keys: ['title', 'url'],
     threshold: 0.4,
   })
 }
 
-function updateFuse(tab) {
-  if (fuseInstance) {
-    fuseInstance.add(tab)
-  }
+function addToFuse(tab) {
+  fuse.add(tab)
+  console.log('🚀 ~ addToFuse ~ fuse.getIndex():', tab, fuse.getIndex())
 }
 
 function removeFromFuse(tab) {
-  if (fuseInstance) {
-    fuseInstance.remove((t) => t.id === tab.id)
-  }
+  fuse.remove((t) => t.id === tab.id)
 }
 
 function logError(err) {
@@ -105,8 +105,8 @@ async function getAndSaveTabsToReadLater() {
       } else {
         setBadgeBackground(colors.green[500], tab.id)
         const { url, title, date } = tab
-        const addedTab = await readLaterDB.add({ url, title, date })
-        updateFuse(addedTab)
+        const id = await readLaterDB.add({ url, title, date })
+        addToFuse({ url, title, date, id })
       }
     }
 
@@ -186,14 +186,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           const query = request.query
           if (!query) {
             sendResponse({ success: true, tabs })
-          } else if (fuseInstance) {
-            const results = fuseInstance.search(query).map((result) => result.item)
-            sendResponse({ success: true, tabs: results })
           } else {
-            const fuse = new Fuse(tabs, {
-              keys: ['title', 'url'],
-              threshold: 0.4,
-            })
             const results = fuse.search(query).map((result) => result.item)
             sendResponse({ success: true, tabs: results })
           }
@@ -230,36 +223,6 @@ chrome.commands.onCommand.addListener(async (command) => {
       break
   }
 })
-
-// if (!isProd) {
-//   chrome.contextMenus.create({
-//     id: 'open_debug_tab',
-//     title: 'Debug',
-//     contexts: ['action'],
-//   })
-//   chrome.contextMenus.create({
-//     id: 'open_popup_tab',
-//     title: 'Popup',
-//     contexts: ['action'],
-//   })
-// }
-
-// chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-//   switch (info.menuItemId) {
-//     case 'open_debug_tab':
-//       const b = import.meta.env.VITE_BROWSER
-//       const url = chrome.runtime.getURL(
-//         b === 'firefox' ? '_generated_background_page.html' : 'service-worker-loader.js',
-//       )
-//       createTab(chrome.runtime.getURL(url), true)
-//       break
-//     case 'open_popup_tab':
-//       createTab(chrome.runtime.getURL('popup.html'), true)
-//       break
-//     default:
-//       break
-//   }
-// })
 
 const main = async () => {
   checkAndSyncStorage()
