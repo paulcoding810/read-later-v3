@@ -1,4 +1,3 @@
-import loadingIcon from '../assets/loading.svg'
 import { useCallback, useEffect, useState } from 'react'
 import colors from 'tailwindcss/colors'
 import packageData from '../../package.json'
@@ -8,6 +7,7 @@ import downloadIcon from '../assets/download.svg'
 import emptyIcon from '../assets/empty.svg'
 import downIcon from '../assets/expand_circle_down.svg'
 import upIcon from '../assets/expand_circle_up.svg'
+import loadingIcon from '../assets/loading.svg'
 import groupsIcon from '../assets/workspaces.svg'
 import { messages } from '../background/message'
 import SearchBar from '../components/SearchBar'
@@ -203,7 +203,10 @@ export function Popup() {
 
           {/* custom firefox version */}
           <div className="pt-2 mt-1 text-xs text-center text-gray-400 border-t">
-            v{'3' + packageData.version.slice(1)}
+            v
+            {navigator.userAgent.includes('Chrome')
+              ? packageData.version
+              : '3' + packageData.version.slice(1)}
           </div>
         </div>
       )}
