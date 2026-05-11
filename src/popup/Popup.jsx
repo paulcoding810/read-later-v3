@@ -3,6 +3,7 @@ import colors from 'tailwindcss/colors'
 import packageData from '../../package.json'
 import addIcon from '../assets/circle_plus.svg'
 import copyIcon from '../assets/copy.svg'
+import deleteIcon from '../assets/delete.svg'
 import downloadIcon from '../assets/download.svg'
 import emptyIcon from '../assets/empty.svg'
 import moreIcon from '../assets/more.svg'
@@ -13,6 +14,7 @@ import SearchBar from '../components/SearchBar'
 import Tab from '../components/Tab'
 import Groups from '../groups/Groups'
 import '../tailwind.css'
+import { iconCacheDB } from '../helper'
 import { setBadge, setBadgeBackground } from '../utils/badge'
 import { save2Json } from '../utils/file'
 import { getCurrentWindowTabs } from '../utils/tabs'
@@ -202,6 +204,17 @@ export function Popup() {
           >
             <img className="w-4 h-4" src={copyIcon} alt="" />
             <span>Copy All URLs</span>
+          </button>
+
+          <button
+            onClick={async () => {
+              await iconCacheDB.clear()
+              setExpanded(false)
+            }}
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded hover:bg-blue-50 hover:text-blue-600"
+          >
+            <img className="w-4 h-4" src={deleteIcon} alt="" />
+            <span>Invalidate Icon Cache</span>
           </button>
 
           {/* custom firefox version */}
