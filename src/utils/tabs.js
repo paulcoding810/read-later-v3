@@ -157,14 +157,14 @@ export function updateUrl(url) {
 }
 
 export async function getIcon(url) {
+  let domain
   try {
-    const { origin } = new URL(url)
-    const domain = origin.replace('https://', '').replace('http://', '')
+    domain = new URL(url).host
 
     const cached = await getCachedIcon(domain)
     if (cached) return cached
 
-    const iconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${origin}`
+    const iconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
     const response = await fetch(iconUrl)
     const blob = await response.blob()
     await setCachedIcon(domain, blob)
@@ -172,7 +172,7 @@ export async function getIcon(url) {
     return cachedUrl || iconUrl
   } catch (error) {
     console.error('fail to get icon', error)
-    return 'https://www.google.com/s2/favicons?sz=64&domain=github.com'
+    return `https://www.google.com/s2/favicons?sz=64&domain=${domain || 'github.com'}`
   }
 }
 
