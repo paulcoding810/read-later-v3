@@ -53,4 +53,4 @@ export { groupDB, readLaterDB, iconCacheDB, syncStorageToDB }
 
 globalThis['readLaterDB'] = readLaterDB
 globalThis['groupDB'] = groupDB
-globalThis['groupDB'] = groupDB
+globalThis['iconCacheDB'] = iconCacheDB
