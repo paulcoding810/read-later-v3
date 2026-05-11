@@ -166,13 +166,15 @@ export async function getIcon(url) {
 
     const iconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
     const response = await fetch(iconUrl, { mode: 'no-cors' })
+    if (!response.ok) return iconUrl
+
     const blob = await response.blob()
     await setCachedIcon(domain, blob)
     const cachedUrl = await getCachedIcon(domain)
     return cachedUrl || iconUrl
   } catch (error) {
     console.error('fail to get icon', error)
-    return `https://www.google.com/s2/favicons?sz=64&domain=${domain || 'github.com'}`
+    return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
   }
 }
 
