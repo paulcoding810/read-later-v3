@@ -165,7 +165,7 @@ export async function getIcon(url) {
     if (cached) return cached
 
     const iconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
-    const response = await fetch(iconUrl)
+    const response = await fetch(iconUrl, { mode: 'no-cors' })
     const blob = await response.blob()
     await setCachedIcon(domain, blob)
     const cachedUrl = await getCachedIcon(domain)
