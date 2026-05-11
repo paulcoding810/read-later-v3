@@ -53,5 +53,4 @@ export default defineManifest({
     },
   ],
   permissions: ['storage', 'tabs'],
-  host_permissions: browser == 'firefox' ? ['https://www.google.com/*'] : [],
 })
