@@ -5,8 +5,7 @@ import addIcon from '../assets/circle_plus.svg'
 import copyIcon from '../assets/copy.svg'
 import downloadIcon from '../assets/download.svg'
 import emptyIcon from '../assets/empty.svg'
-import downIcon from '../assets/expand_circle_down.svg'
-import upIcon from '../assets/expand_circle_up.svg'
+import moreIcon from '../assets/more.svg'
 import loadingIcon from '../assets/loading.svg'
 import groupsIcon from '../assets/workspaces.svg'
 import { messages } from '../background/message'
@@ -104,26 +103,32 @@ export function Popup() {
 
   return (
     <div className="flex flex-col w-full gap-2 p-2 bg-white">
-      <div className="sticky top-0 z-10 flex flex-row items-center gap-2 pb-2 bg-white">
+      <div className="sticky top-0 z-10 flex flex-row items-center gap-1.5 pb-2 bg-white">
         <div className="flex-1">
           <SearchBar {...{ query, setQuery }} />
         </div>
         <button
           title="More"
           onClick={() => setExpanded(!expanded)}
-          className={`flex items-center justify-center w-9 h-9 p-1.5 rounded-lg border-2 transition-colors ${
-            expanded ? 'bg-blue-200 border-blue-500' : 'border-gray-300 hover:bg-gray-100'
+          className={`flex items-center justify-center shrink-0 w-9 h-9 rounded-lg border transition-colors ${
+            expanded
+              ? 'bg-blue-100 border-blue-300'
+              : 'border-gray-300 hover:bg-gray-100 hover:border-gray-400'
           }`}
         >
-          <img src={expanded ? upIcon : downIcon} alt="More" className="w-5 h-5" />
+          <img
+            src={moreIcon}
+            alt="More"
+            className={`w-5 h-5 transition-transform ${expanded ? 'rotate-90' : ''}`}
+          />
         </button>
         <button
           title="Groups"
           onClick={() => setShowsGroups(!showsGroups)}
-          className={`flex items-center justify-center w-9 h-9 p-1.5 rounded-lg border-2 transition-colors ${
+          className={`flex items-center justify-center shrink-0 w-9 h-9 rounded-lg border transition-colors ${
             showsGroups
-              ? 'bg-blue-200 border-blue-500 text-white'
-              : 'border-gray-300 hover:bg-gray-100'
+              ? 'bg-blue-100 border-blue-300'
+              : 'border-gray-300 hover:bg-gray-100 hover:border-gray-400'
           }`}
         >
           <img src={groupsIcon} alt="Groups" className="w-5 h-5" />

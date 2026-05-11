@@ -13,11 +13,25 @@ export default function SearchBar({ query, setQuery }) {
 
   return (
     <div
-      className={`flex h-8 flex-1 items-center gap-1 border-2 px-1 rounded-lg ${focused ? 'border-blue-500' : ''}`}
+      className={`flex h-9 flex-1 items-center gap-1.5 border px-2 rounded-lg ${
+        focused ? 'border-blue-500 ring-1 ring-blue-200' : 'border-gray-300'
+      }`}
     >
+      <svg
+        className="w-4 h-4 text-gray-400 shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+      </svg>
       <input
         ref={inputRef}
-        className="flex-1 mx-1 border-none outline-none"
+        className="flex-1 text-sm border-none outline-none"
         type="text"
         placeholder="Search..."
         value={query}
@@ -28,7 +42,7 @@ export default function SearchBar({ query, setQuery }) {
       />
       {query.length > 0 && (
         <button onClick={() => setQuery('')} className="w-4 h-4 rounded">
-          <img src={closeIcon} alt="Close" title="Clear" />
+          <img src={closeIcon} alt="Clear" />
         </button>
       )}
     </div>
