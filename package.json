@@ -17,6 +17,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:firefox": "BROWSER=firefox NODE_ENV=development vite build --mode development --minify false",
     "build": "vite build",
     "build:firefox": "BROWSER=firefox vite build",
     "preview": "vite preview",
