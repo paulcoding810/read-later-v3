@@ -2,6 +2,7 @@ import { defineManifest } from '@crxjs/vite-plugin'
 import packageData from '../package.json' assert { type: 'json' }
 
 const isDev = process.env.NODE_ENV === 'development'
+const browser = process.env.BROWSER ?? 'chrome'
 
 export default defineManifest({
   name: `${packageData.displayName || packageData.name}${isDev ? ` ➡️ Dev` : ''}`,
@@ -41,9 +42,16 @@ export default defineManifest({
     : undefined,
   web_accessible_resources: [
     {
-      resources: ['img/logo-16.png', 'img/logo-32.png', 'img/logo-48.png', 'img/logo-128.png', 'groups.html'],
+      resources: [
+        'img/logo-16.png',
+        'img/logo-32.png',
+        'img/logo-48.png',
+        'img/logo-128.png',
+        'groups.html',
+      ],
       matches: [],
     },
   ],
   permissions: ['storage', 'tabs'],
+  host_permissions: browser == 'firefox' ? ['https://www.google.com/*'] : [],
 })
