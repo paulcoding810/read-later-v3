@@ -13,7 +13,7 @@ export default function SearchBar({ query, setQuery }) {
 
   return (
     <div
-      className={`flex h-9 flex-1 items-center gap-1.5 border px-2 rounded-lg ${
+      className={`flex h-9 flex-1 items-center gap-1.5 border px-2 rounded-lg min-w-0 ${
         focused ? 'border-blue-500 ring-1 ring-blue-200' : 'border-gray-300'
       }`}
     >
@@ -31,7 +31,7 @@ export default function SearchBar({ query, setQuery }) {
       </svg>
       <input
         ref={inputRef}
-        className="flex-1 text-sm border-none outline-none"
+        className="min-w-0 text-sm border-none outline-none"
         type="text"
         placeholder="Search..."
         value={query}
@@ -40,11 +40,12 @@ export default function SearchBar({ query, setQuery }) {
         autoFocus
         onChange={(e) => setQuery(e.target.value)}
       />
-      {query.length > 0 && (
-        <button onClick={() => setQuery('')} className="w-4 h-4 rounded">
-          <img src={closeIcon} alt="Clear" />
-        </button>
-      )}
+      <button
+        onClick={() => setQuery('')}
+        className={`w-4 h-4 rounded ${query.length > 0 ? '' : 'invisible'}`}
+      >
+        <img src={closeIcon} alt="Clear" />
+      </button>
     </div>
   )
 }

@@ -104,9 +104,7 @@ export function Popup() {
   return (
     <div className="flex flex-col w-full gap-2 p-2 bg-white">
       <div className="sticky top-0 z-10 flex flex-row items-center gap-1.5 pb-2 bg-white">
-        <div className="flex-1">
-          <SearchBar {...{ query, setQuery }} />
-        </div>
+        <SearchBar {...{ query, setQuery }} />
         <button
           title="More"
           onClick={() => setExpanded(!expanded)}
