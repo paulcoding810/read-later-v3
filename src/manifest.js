@@ -27,6 +27,12 @@ export default defineManifest({
       },
       description: "Send a 'read-later' event to the extension",
     },
+    _execute_action: {
+      suggested_key: {
+        default: 'Ctrl+Shift+B',
+        mac: 'MacCtrl+Shift+B',
+      },
+    },
   },
   background: {
     service_worker: 'src/background/index.js',
