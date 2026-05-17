@@ -57,27 +57,26 @@ Older versions:
 Prerequisites:
 
 - Node.js >= 14
-- Yarn package manager
 
 Setup:
 
 ```bash
 # Install dependencies
-yarn
+pnpm i
 ```
 
 ### 💻 Development (Chrome)
 
 ```bash
 # Start development server
-yarn dev
+pnpm dev
 ```
 
 ### 🏗️ Building
 
 ```bash
-yarn build # for Chrome extension
-yarn build:firefox # for Firefox add-on
+pnpm build # for Chrome extension
+pnpm build:firefox # for Firefox add-on
 ```
 
 ### 📦 Packing
@@ -85,8 +84,8 @@ yarn build:firefox # for Firefox add-on
 To create a zip file for distribution, run:
 
 ```bash
-yarn zip # for chrome
-yarn zip:firefox # for firefox
+pnpm zip # for chrome
+pnpm zip:firefox # for firefox
 ```
 
 ### Loading in Chrome
@@ -95,11 +94,12 @@ yarn zip:firefox # for firefox
 2. Click "Load unpacked"
 3. Select the `build` folder
 
-### Loading in Firefox
+### Firefox Extension Developer Mode
 
-1. Navigate to `about:debugging#/runtime/this-firefox`
-2. Click "Load Temporary Add-on"
-3. Select the `build` folder
+1. Build your project firstly by running `pnpm build:firefox`
+2. Open Firefox and go to `about:debugging#/runtime/this-firefox`
+3. Click on 'Load Temporary Add-on"
+4. Select the `build` folder
 
 ---
 
