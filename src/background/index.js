@@ -7,6 +7,7 @@ import devDB from './devdb'
 import { commands, messages } from './message'
 
 const isProd = import.meta.env.PROD
+const WINDOWS_FIREFOX_SHORTCUT_WARNING_PAGE = 'shortcut-warning.html'
 
 let fuse = new Fuse([], {
   keys: ['title', 'url'],
@@ -23,7 +24,6 @@ async function initFuse() {
 
 function addToFuse(tab) {
   fuse.add(tab)
-  console.log('🚀 ~ addToFuse ~ fuse.getIndex():', tab, fuse.getIndex())
 }
 
 function removeFromFuse(tab) {
@@ -32,6 +32,37 @@ function removeFromFuse(tab) {
 
 function logError(err) {
   console.log('onError', err)
+}
+
+function isFirefox() {
+  return navigator.userAgent.includes('Firefox')
+}
+
+async function isWindows() {
+  const platformInfo = await new Promise((resolve) => {
+    chrome.runtime.getPlatformInfo(resolve)
+  })
+  return platformInfo.os === 'win'
+}
+
+async function openWindowsFirefoxShortcutWarning() {
+  if (!isFirefox() || !(await isWindows())) return
+
+  await new Promise((resolve) => {
+    chrome.tabs.create(
+      {
+        url: chrome.runtime.getURL(WINDOWS_FIREFOX_SHORTCUT_WARNING_PAGE),
+        active: true,
+      },
+      () => {
+        const error = chrome.runtime.lastError
+        if (error) {
+          console.warn('Unable to open Windows Firefox shortcut warning:', error)
+        }
+        resolve()
+      },
+    )
+  })
 }
 
 const updateBadge = async () => {
@@ -116,7 +147,11 @@ async function getAndSaveTabsToReadLater() {
   }
 }
 
-chrome.runtime.onInstalled.addListener(async () => {
+chrome.runtime.onInstalled.addListener(async ({ reason }) => {
+  if (reason === 'install') {
+    await openWindowsFirefoxShortcutWarning()
+  }
+
   if (!isProd) {
     for (let group of devDB.groups) {
       await groupDB.add(group)

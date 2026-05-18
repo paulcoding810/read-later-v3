@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           groups: './groups.html',
+          shortcutWarning: './shortcut-warning.html',
         },
         output: {
           chunkFileNames: 'assets/chunk-[hash].js',
