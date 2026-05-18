@@ -45,12 +45,19 @@ Older versions:
 ### Tab Management
 
 - Quick save current tab with `Ctrl + B`
+- Quick open ReadLater popup with `Ctrl + Shift + B`
 - Open tab in incognito mode with `Shift + Click`
 - Open saved tabs in new window. `Cmd/Ctrl + Click` to also remove tab from reading list
+- Fuzzy search through saved tabs
+- Export all saved tabs to JSON
+- Copy all URLs from selected tabs
+- Favicon caching with ability to invalidate cache (Chrome)
 
 ### Group Organization
 
 - Create and manage collections of related tabs
+- Click a group to open all its URLs at once
+- Edit groups via JSON editor
 
 ## 🛠️ Installation
 
