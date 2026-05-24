@@ -1,9 +1,7 @@
-import { createTab } from '../utils/tabs'
+import { messages } from '../background/message'
 
 function openUrls(urls) {
-  urls.toReversed().forEach((url, index) => {
-    setTimeout(() => createTab(url), index * 250)
-  })
+  chrome.runtime.sendMessage({ type: messages.OPEN_GROUP_URLS, urls })
 }
 
 export default function Group({ name, urls }) {

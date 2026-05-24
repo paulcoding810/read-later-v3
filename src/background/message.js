@@ -8,6 +8,7 @@ export const messages = {
   OPEN_LINK: 'open_link',
   OPEN_SELECTED_TEXT: 'open_selected_text',
   SEARCH_TABS: 'search_tabs',
+  OPEN_GROUP_URLS: 'open_group_urls',
 }
 
 export const commands = {

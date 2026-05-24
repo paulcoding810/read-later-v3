@@ -2,7 +2,7 @@ import Fuse from 'fuse.js'
 import colors from 'tailwindcss/colors'
 import { groupDB, readLaterDB } from '../helper'
 import { setBadge, setBadgeBackground } from '../utils/badge'
-import { getCurrentWindowTabsInfo } from '../utils/tabs'
+import { createTab, getCurrentWindowTabsInfo } from '../utils/tabs'
 import devDB from './devdb'
 import { commands, messages } from './message'
 
@@ -230,6 +230,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           logError(err)
           sendResponse({ success: false, error: err.message })
         })
+      break
+    case messages.OPEN_GROUP_URLS:
+      request.urls.toReversed().forEach((url, index) => {
+        setTimeout(() => createTab(url), index * 250)
+      })
+      sendResponse({ success: true })
       break
     case messages.EXPORT_DATA:
       Promise.all([readLaterDB.getAll(), groupDB.getAll()])
