@@ -20,9 +20,7 @@ Read Later
 <a href="https://chromewebstore.google.com/detail/read-later/cbkpffbpdnkdlfdaoeakdelhmakefomb"><img src="https://user-images.githubusercontent.com/585534/107280622-91a8ea80-6a26-11eb-8d07-77c548b28665.png" alt="Get Read Later for Chromium"></a>
 </p>
 
----
-
-Read Later is a browser extension to efficiently manage and save tabs for later reading
+Read Later is a lightweight tab-saving extension for people who want to keep useful pages without leaving dozens of tabs open.
 
 ---
 
@@ -57,7 +55,6 @@ Older versions:
 
 - Create and manage collections of related tabs
 - Click a group to open all its URLs at once
-- Edit groups via JSON editor
 
 ## 🛠️ Installation
 
@@ -110,7 +107,7 @@ pnpm zip:firefox # for firefox
 
 ---
 
-Built with [create-chrome-ext](https://github.com/guocaoyi/create-chrome-ext)
+Built with [gen-ext](https://github.com/paulcoding810/gen-ext)
 
 <!----------------------------------[ Badges ]--------------------------------->
 
