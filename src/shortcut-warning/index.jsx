@@ -13,7 +13,7 @@ function ShortcutWarning() {
 
         <p className="mb-5 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 leading-relaxed text-amber-900">
           On Windows Firefox, the default{' '}
-          <kbd className="rounded border border-amber-300 bg-white px-1.5 py-0.5 text-sm">
+          <kbd className="rounded-sm border border-amber-300 bg-white px-1.5 py-0.5 text-sm">
             Ctrl + B
           </kbd>{' '}
           shortcut opens the Bookmarks Sidebar, so it may not save the current tab in Read Later.
@@ -26,7 +26,7 @@ function ShortcutWarning() {
         <ol className="ml-6 list-decimal space-y-2 leading-relaxed text-gray-700">
           <li>
             Navigate to{' '}
-            <code className="rounded border border-gray-300 bg-gray-100 px-1.5 py-0.5 text-gray-900">
+            <code className="rounded-sm border border-gray-300 bg-gray-100 px-1.5 py-0.5 text-gray-900">
               about:addons
             </code>{' '}
             by typing it in the address bar.

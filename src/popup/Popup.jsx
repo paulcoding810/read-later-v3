@@ -152,8 +152,8 @@ export function Popup() {
                     <span>No saved tabs yet</span>
                     <span className="text-xs text-gray-400">
                       Press{' '}
-                      <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 rounded border">Ctrl</kbd> +{' '}
-                      <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 rounded border">B</kbd> to
+                      <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 rounded-sm border">Ctrl</kbd> +{' '}
+                      <kbd className="px-1.5 py-0.5 text-xs bg-gray-100 rounded-sm border">B</kbd> to
                       add the current tab
                     </span>
                   </div>
@@ -178,7 +178,7 @@ export function Popup() {
                 setExpanded(false)
               })
             }}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded hover:bg-blue-50 hover:text-blue-600"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600"
           >
             <img className="w-4 h-4" src={addIcon} alt="" />
             <span>Add Current Tab</span>
@@ -189,7 +189,7 @@ export function Popup() {
               exportJson()
               setExpanded(false)
             }}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded hover:bg-blue-50 hover:text-blue-600"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600"
           >
             <img className="w-4 h-4" src={downloadIcon} alt="" />
             <span>Export Data</span>
@@ -200,7 +200,7 @@ export function Popup() {
               copyTabUrl()
               setExpanded(false)
             }}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded hover:bg-blue-50 hover:text-blue-600"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600"
           >
             <img className="w-4 h-4" src={copyIcon} alt="" />
             <span>Copy All URLs</span>
@@ -211,7 +211,7 @@ export function Popup() {
               await iconCacheDB.clear()
               setExpanded(false)
             }}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded hover:bg-blue-50 hover:text-blue-600"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600"
           >
             <img className="w-4 h-4" src={deleteIcon} alt="" />
             <span>Invalidate Icon Cache</span>

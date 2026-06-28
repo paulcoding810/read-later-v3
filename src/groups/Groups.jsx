@@ -48,7 +48,7 @@ export default function Groups({ setShowsGroups }) {
         {setShowsGroups && (
           <button
             onClick={() => setShowsGroups(false)}
-            className="p-1 rounded outline-none hover:bg-blue-400"
+            className="p-1 rounded-sm outline-hidden hover:bg-blue-400"
           >
             <img src={backIcon} alt="Back" />
           </button>
@@ -58,13 +58,13 @@ export default function Groups({ setShowsGroups }) {
         {!editing && (
           <button
             onClick={() => setEditing(true)}
-            className="flex items-center gap-1 px-2 py-1 text-sm rounded hover:bg-blue-400"
+            className="flex items-center gap-1 px-2 py-1 text-sm rounded-sm hover:bg-blue-400"
           >
             <img src={editIcon} alt="" className="w-4 h-4" />
             Edit
           </button>
         )}
-        <button onClick={openInNewTab} className="p-1 rounded outline-none hover:bg-blue-400">
+        <button onClick={openInNewTab} className="p-1 rounded-sm outline-hidden hover:bg-blue-400">
           <img src={openInNewIcon} alt="Open in new tab" />
         </button>
       </div>

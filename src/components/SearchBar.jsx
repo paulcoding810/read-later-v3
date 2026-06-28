@@ -31,7 +31,7 @@ export default function SearchBar({ query, setQuery }) {
       </svg>
       <input
         ref={inputRef}
-        className="min-w-0 text-sm border-none outline-none"
+        className="min-w-0 text-sm border-none outline-hidden"
         type="text"
         placeholder="Search..."
         value={query}
@@ -42,7 +42,7 @@ export default function SearchBar({ query, setQuery }) {
       />
       <button
         onClick={() => setQuery('')}
-        className={`w-4 h-4 rounded ${query.length > 0 ? '' : 'invisible'}`}
+        className={`w-4 h-4 rounded-sm ${query.length > 0 ? '' : 'invisible'}`}
       >
         <img src={closeIcon} alt="Clear" />
       </button>

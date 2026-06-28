@@ -37,15 +37,15 @@ export default function GroupEditor({ groups, setGroups, goBack }) {
       <textarea
         value={json}
         onChange={(e) => setJson(e.target.value)}
-        className="w-full h-[400px] p-2 font-mono text-xs border rounded resize-none"
+        className="w-full h-[400px] p-2 font-mono text-xs border rounded-sm resize-none"
       />
       <div className="flex flex-row justify-between mt-2">
-        <button onClick={goBack} className="p-2 text-white bg-red-500 rounded hover:bg-red-600">
+        <button onClick={goBack} className="p-2 text-white bg-red-500 rounded-sm hover:bg-red-600">
           Cancel
         </button>
         <button
           onClick={handleSave}
-          className="p-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+          className="p-2 text-white bg-blue-500 rounded-sm hover:bg-blue-600"
         >
           Save
         </button>
