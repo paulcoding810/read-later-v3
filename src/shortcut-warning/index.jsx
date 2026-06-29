@@ -8,15 +8,15 @@ function ShortcutWarning() {
 
   return (
     <main className="grid min-h-screen place-items-center bg-slate-50 px-4 py-8 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-      <section className="w-full max-w-2xl rounded-lg border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/70 dark:bg-gray-800 dark:border-gray-700">
+      <section className="w-full max-w-2xl rounded-lg border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/70 dark:border-gray-700 dark:bg-gray-800">
         <header className="mb-6 flex items-center gap-3">
           <img src="/img/logo-48.png" alt="Read Later" className="h-10 w-10" />
-          <h1 className="m-0 text-2xl font-semibold leading-tight">Read Later shortcut notice</h1>
+          <h1 className="m-0 text-2xl leading-tight font-semibold">Read Later shortcut notice</h1>
         </header>
 
-        <p className="mb-5 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 leading-relaxed text-amber-900 dark:bg-amber-900/30 dark:border-amber-700">
+        <p className="mb-5 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 leading-relaxed text-amber-900 dark:border-amber-700 dark:bg-amber-900/30">
           On Windows Firefox, the default{' '}
-          <kbd className="rounded-sm border border-amber-300 bg-white px-1.5 py-0.5 text-sm dark:bg-gray-700 dark:border-gray-600">
+          <kbd className="rounded-sm border border-amber-300 bg-white px-1.5 py-0.5 text-sm dark:border-gray-600 dark:bg-gray-700">
             Ctrl + B
           </kbd>{' '}
           shortcut opens the Bookmarks Sidebar, so it may not save the current tab in Read Later.
@@ -29,7 +29,7 @@ function ShortcutWarning() {
         <ol className="ml-6 list-decimal space-y-2 leading-relaxed text-gray-700 dark:text-gray-300">
           <li>
             Navigate to{' '}
-            <code className="rounded-sm border border-gray-300 bg-gray-100 px-1.5 py-0.5 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            <code className="rounded-sm border border-gray-300 bg-gray-100 px-1.5 py-0.5 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100">
               about:addons
             </code>{' '}
             by typing it in the address bar.
