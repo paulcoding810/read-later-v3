@@ -18,7 +18,7 @@ async function getGroupsDatabase() {
   return await groupDB.getAll()
 }
 
-export default function Groups({ setShowsGroups }) {
+export default function Groups({ setShowsGroups, darkMode }) {
   const [groups, setGroups] = useState([])
   const [editing, setEditing] = useState(false)
 
@@ -43,7 +43,7 @@ export default function Groups({ setShowsGroups }) {
   }, [])
 
   return (
-    <div className="bg-neutral-50 min-h-[400px]">
+    <div className="bg-neutral-50 min-h-100 dark:bg-gray-900">
       <div className="flex items-center gap-2 px-4 py-2 text-white bg-blue-500">
         {setShowsGroups && (
           <button
@@ -75,7 +75,9 @@ export default function Groups({ setShowsGroups }) {
           goBack={backFromEditor}
         />
       ) : groups.length === 0 ? (
-        <div className="flex items-center justify-center h-48 text-gray-400">No groups yet.</div>
+        <div className="flex items-center justify-center h-48 text-gray-400 dark:text-gray-500">
+          No groups yet.
+        </div>
       ) : (
         <div className="p-4 space-y-3">
           {groups.map(({ name, urls }) => (

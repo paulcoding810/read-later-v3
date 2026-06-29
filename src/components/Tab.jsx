@@ -32,24 +32,24 @@ export default function Tab({ title, url, onRemove }) {
 
   return (
     <div
-      className="relative flex flex-row items-center gap-2 p-2 mb-1 text-black transition-colors border rounded-sm cursor-pointer group hover:bg-gray-100 active:bg-blue-500"
+      className="relative flex flex-row items-center gap-2 p-2 mb-1 text-black transition-colors bg-white border border-gray-200 rounded-sm cursor-pointer group hover:bg-gray-50 hover:border-gray-300 active:bg-blue-50 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:active:bg-blue-950/40"
       onClick={handleClick}
     >
       <img className="shrink-0 w-6 h-6" src={icon} alt="" />
       <div className="flex-1 min-w-0">
         <div
           title={title}
-          className="overflow-hidden text-sm font-medium text-gray-900 text-ellipsis whitespace-nowrap"
+          className="overflow-hidden text-sm font-medium text-gray-900 text-ellipsis whitespace-nowrap dark:text-gray-100"
         >
           {title}
         </div>
-        <div className="overflow-hidden text-xs text-gray-500 text-ellipsis whitespace-nowrap">
+        <div className="overflow-hidden text-xs text-gray-500 text-ellipsis whitespace-nowrap dark:text-gray-300">
           {url}
         </div>
       </div>
       <div className="absolute flex gap-1 opacity-0 top-1 right-1 group-hover:opacity-100">
         <button
-          className="p-1 text-gray-400 transition-all bg-white rounded-sm hover:bg-blue-100 hover:text-blue-600"
+          className="p-1 text-gray-400 transition-all bg-white border border-gray-200 rounded-sm shadow-sm hover:bg-blue-50 hover:text-blue-600 dark:bg-gray-900 dark:border-gray-700 dark:text-blue-300 dark:hover:bg-blue-950/60 dark:hover:border-blue-800"
           onClick={handleCopy}
         >
           {isCopied ? (
@@ -59,7 +59,7 @@ export default function Tab({ title, url, onRemove }) {
           )}
         </button>
         <button
-          className="p-1 text-gray-400 transition-all bg-white rounded-sm hover:bg-red-100 hover:text-red-600"
+          className="p-1 text-gray-400 transition-all bg-white border border-gray-200 rounded-sm shadow-sm hover:bg-red-50 hover:text-red-600 dark:bg-gray-900 dark:border-gray-700 dark:text-red-300 dark:hover:bg-red-950/60 dark:hover:border-red-800"
           onClick={(e) => {
             e.stopPropagation()
             onRemove()

@@ -14,11 +14,11 @@ export default function SearchBar({ query, setQuery }) {
   return (
     <div
       className={`flex h-9 flex-1 items-center gap-1.5 border px-2 rounded-lg min-w-0 ${
-        focused ? 'border-blue-500 ring-1 ring-blue-200' : 'border-gray-300'
+        focused ? 'border-blue-500 ring-1 ring-blue-200' : 'border-gray-300 dark:border-gray-500'
       }`}
     >
       <svg
-        className="w-4 h-4 text-gray-400 shrink-0"
+        className="w-4 h-4 text-gray-400 shrink-0 dark:text-gray-500"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -31,7 +31,7 @@ export default function SearchBar({ query, setQuery }) {
       </svg>
       <input
         ref={inputRef}
-        className="min-w-0 text-sm border-none outline-hidden"
+        className="min-w-0 text-sm border-none outline-hidden dark:bg-gray-800 dark:text-gray-200"
         type="text"
         placeholder="Search..."
         value={query}

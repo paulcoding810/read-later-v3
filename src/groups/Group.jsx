@@ -7,18 +7,18 @@ function openUrls(urls) {
 export default function Group({ name, urls }) {
   return (
     <div
-      className="bg-white border rounded-lg p-3 cursor-pointer hover:shadow-md transition-shadow"
+      className="bg-white border rounded-lg p-3 cursor-pointer hover:shadow-md transition-shadow dark:bg-gray-800 dark:border-gray-700"
       onClick={() => openUrls(urls)}
     >
       <div className="flex items-center gap-2 mb-2">
         <h2 className="font-semibold text-blue-600">{name}</h2>
-        <span className="px-1.5 py-0.5 text-xs bg-gray-100 text-gray-500 rounded-full">
+        <span className="px-1.5 py-0.5 text-xs bg-gray-100 text-gray-500 rounded-full dark:bg-gray-700 dark:text-gray-400">
           {urls.length}
         </span>
       </div>
       <ul className="space-y-0.5">
         {urls.map((url) => (
-          <li key={url} className="text-xs text-gray-600 truncate" title={url}>
+          <li key={url} className="text-xs text-gray-600 truncate dark:text-gray-400" title={url}>
             {url.startsWith('http') ? url : <span className="text-red-400">{url}</span>}
           </li>
         ))}

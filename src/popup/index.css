@@ -17,6 +17,11 @@
   scrollbar-gutter: stable;
 }
 
+:root.dark {
+  color-scheme: dark;
+  background-color: #111827;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     background-color: #fafafa;
