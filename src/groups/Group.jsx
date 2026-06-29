@@ -11,7 +11,7 @@ export default function Group({ name, urls }) {
       onClick={() => openUrls(urls)}
     >
       <div className="flex items-center gap-2 mb-2">
-        <h2 className="font-semibold text-blue-600">{name}</h2>
+        <h2 className="text-blue-600 dark:text-blue-300">{name}</h2>
         <span className="px-1.5 py-0.5 text-xs bg-gray-100 text-gray-500 rounded-full dark:bg-gray-700 dark:text-gray-400">
           {urls.length}
         </span>

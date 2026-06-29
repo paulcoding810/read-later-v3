@@ -1,6 +1,7 @@
 import { crx } from '@crxjs/vite-plugin'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import svgr from 'vite-plugin-svgr'
 import { patchManifest } from './convert.js'
 import manifest from './src/manifest.js'
 
@@ -33,7 +34,7 @@ export default defineConfig(({ mode }) => {
       ],
     },
 
-    plugins: [crx({ manifest: convertedManifest, browser }), react()],
+    plugins: [crx({ manifest: convertedManifest, browser }), react(), svgr()],
     server: {
       port: 5173,
       strictPort: true,

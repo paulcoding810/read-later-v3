@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import closeIcon from '../assets/close.svg'
+import CloseIcon from '../assets/close.svg?react'
+import SearchIcon from '../assets/search.svg?react'
 
 export default function SearchBar({ query, setQuery }) {
   const [focused, setFocused] = useState(false)
@@ -13,25 +14,14 @@ export default function SearchBar({ query, setQuery }) {
 
   return (
     <div
-      className={`flex h-9 flex-1 items-center gap-1.5 border px-2 rounded-lg min-w-0 ${
+      className={`flex h-9 min-w-0 flex-1 items-center gap-1.5 rounded-lg border px-2 ${
         focused ? 'border-blue-500 ring-1 ring-blue-200' : 'border-gray-300 dark:border-gray-500'
       }`}
     >
-      <svg
-        className="w-4 h-4 text-gray-400 shrink-0 dark:text-gray-500"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="11" cy="11" r="8" />
-        <path d="m21 21-4.3-4.3" />
-      </svg>
+      <SearchIcon className="size-4 shrink-0 text-gray-400 dark:text-gray-500" />
       <input
         ref={inputRef}
-        className="min-w-0 text-sm border-none outline-hidden dark:bg-gray-800 dark:text-gray-200"
+        className="min-w-0 border-none text-sm outline-hidden"
         type="text"
         placeholder="Search..."
         value={query}
@@ -42,9 +32,9 @@ export default function SearchBar({ query, setQuery }) {
       />
       <button
         onClick={() => setQuery('')}
-        className={`w-4 h-4 rounded-sm ${query.length > 0 ? '' : 'invisible'}`}
+        className={`rounded-sm ${query.length > 0 ? '' : 'invisible'}`}
       >
-        <img src={closeIcon} alt="Clear" />
+        <CloseIcon className="size-4 text-red-500 dark:text-red-300" />
       </button>
     </div>
   )

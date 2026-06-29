@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import backIcon from '../assets/arrow_back.svg'
-import editIcon from '../assets/edit.svg'
-import openInNewIcon from '../assets/open_in_new.svg'
+import BackIcon from '../assets/arrow_back.svg?react'
+import EditIcon from '../assets/edit.svg?react'
+import OpenInNewIcon from '../assets/open_in_new.svg?react'
 import { groupDB } from '../helper'
 import { createTab } from '../utils/tabs'
 import Group from './Group'
@@ -43,29 +43,32 @@ export default function Groups({ setShowsGroups, darkMode }) {
   }, [])
 
   return (
-    <div className="bg-neutral-50 min-h-100 dark:bg-gray-900">
-      <div className="flex items-center gap-2 px-4 py-2 text-white bg-blue-500">
+    <div className="min-h-100 bg-neutral-50 dark:bg-gray-900">
+      <div className="flex items-center gap-2 bg-blue-500 px-4 py-2 text-white dark:bg-blue-900">
         {setShowsGroups && (
           <button
             onClick={() => setShowsGroups(false)}
-            className="p-1 rounded-sm outline-hidden hover:bg-blue-400"
+            className="rounded-sm p-1 outline-hidden hover:bg-blue-400 dark:hover:bg-blue-800"
           >
-            <img src={backIcon} alt="Back" />
+            <BackIcon className="size-4 text-gray-100 dark:text-gray-300" />
           </button>
         )}
-        <span className="text-lg font-bold">Groups</span>
+        <span className="text-sm text-gray-100 dark:text-gray-300">Groups</span>
         <div className="flex-1" />
         {!editing && (
           <button
             onClick={() => setEditing(true)}
-            className="flex items-center gap-1 px-2 py-1 text-sm rounded-sm hover:bg-blue-400"
+            className="flex items-center gap-1 rounded-sm px-2 py-1 text-sm text-gray-100 hover:bg-blue-400 dark:text-gray-300 dark:hover:bg-blue-700"
           >
-            <img src={editIcon} alt="" className="w-4 h-4" />
+            <EditIcon className="size-4 text-gray-100 dark:text-gray-300" />
             Edit
           </button>
         )}
-        <button onClick={openInNewTab} className="p-1 rounded-sm outline-hidden hover:bg-blue-400">
-          <img src={openInNewIcon} alt="Open in new tab" />
+        <button
+          onClick={openInNewTab}
+          className="rounded-sm p-1 outline-hidden hover:bg-blue-400 dark:hover:bg-blue-700"
+        >
+          <OpenInNewIcon className="size-4 text-gray-100 dark:text-gray-300" />
         </button>
       </div>
       {editing ? (
@@ -75,11 +78,11 @@ export default function Groups({ setShowsGroups, darkMode }) {
           goBack={backFromEditor}
         />
       ) : groups.length === 0 ? (
-        <div className="flex items-center justify-center h-48 text-gray-400 dark:text-gray-500">
+        <div className="flex h-48 items-center justify-center text-gray-400 dark:text-gray-500">
           No groups yet.
         </div>
       ) : (
-        <div className="p-4 space-y-3">
+        <div className="space-y-3 p-4">
           {groups.map(({ name, urls }) => (
             <Group key={name} {...{ name, urls }} />
           ))}
