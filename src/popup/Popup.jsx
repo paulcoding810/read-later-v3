@@ -106,7 +106,11 @@ export function Popup() {
   if (showsGroups) return <Groups {...{ setShowsGroups, darkMode }} />
 
   return (
-    <div className="flex flex-col w-full gap-2 p-2 bg-white dark:bg-gray-900">
+    <div
+      className={`relative flex flex-col w-full gap-2 p-2 bg-white dark:bg-gray-900 ${
+        expanded ? 'min-h-80' : ''
+      }`}
+    >
       <div className="sticky top-0 z-10 flex flex-row items-center gap-1.5 pb-2 bg-white dark:bg-gray-900">
         <SearchBar {...{ query, setQuery }} />
         <button
