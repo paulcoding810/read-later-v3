@@ -73,6 +73,7 @@ export function Popup() {
   const [query, setQuery] = useState('')
   const [expanded, setExpanded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isChrome] = useState(navigator.userAgent.includes('Chrome'))
 
   const getDBAndSetTabs = useCallback(async (query) => {
     setIsLoading(true)
@@ -174,99 +175,105 @@ export function Popup() {
       )}
 
       {expanded && (
-        <div className="absolute z-50 flex flex-col items-stretch gap-1 p-2 bg-white border border-gray-200 rounded-lg shadow-xl right-2 top-14 dark:bg-gray-800 dark:border-gray-600">
+        <>
           <button
-            onClick={() => {
-              chrome.runtime.sendMessage({ type: messages.ADD_TAB }, (response) => {
-                if (response?.success) {
-                  getDBAndSetTabs(query)
-                }
+            aria-label="Close menu"
+            className="fixed inset-0 z-40 cursor-default"
+            onClick={() => setExpanded(false)}
+          />
+          <div className="absolute z-50 flex flex-col items-stretch gap-1 p-2 bg-white border border-gray-200 rounded-lg shadow-xl right-2 top-14 dark:bg-gray-800 dark:border-gray-600">
+            <button
+              onClick={() => {
+                chrome.runtime.sendMessage({ type: messages.ADD_TAB }, (response) => {
+                  if (response?.success) {
+                    getDBAndSetTabs(query)
+                  }
+                  setExpanded(false)
+                })
+              }}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+            >
+              <img className="w-4 h-4" src={addIcon} alt="" />
+              <span>Add Current Tab</span>
+            </button>
+
+            <button
+              onClick={() => {
+                exportJson()
                 setExpanded(false)
-              })
-            }}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-          >
-            <img className="w-4 h-4" src={addIcon} alt="" />
-            <span>Add Current Tab</span>
-          </button>
+              }}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+            >
+              <img className="w-4 h-4" src={downloadIcon} alt="" />
+              <span>Export Data</span>
+            </button>
 
-          <button
-            onClick={() => {
-              exportJson()
-              setExpanded(false)
-            }}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-          >
-            <img className="w-4 h-4" src={downloadIcon} alt="" />
-            <span>Export Data</span>
-          </button>
+            <button
+              onClick={() => {
+                copyTabUrl()
+                setExpanded(false)
+              }}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+            >
+              <img className="w-4 h-4" src={copyIcon} alt="" />
+              <span>Copy All URLs</span>
+            </button>
 
-          <button
-            onClick={() => {
-              copyTabUrl()
-              setExpanded(false)
-            }}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-          >
-            <img className="w-4 h-4" src={copyIcon} alt="" />
-            <span>Copy All URLs</span>
-          </button>
-
-          <button
-            onClick={async () => {
-              await iconCacheDB.clear()
-              setExpanded(false)
-            }}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-          >
-            <img className="w-4 h-4" src={deleteIcon} alt="" />
-            <span>Invalidate Icon Cache</span>
-          </button>
-
-          <button
-            onClick={toggleDarkMode}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-          >
-            {darkMode ? (
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
+            {isChrome && (
+              <button
+                onClick={async () => {
+                  await iconCacheDB.clear()
+                  setExpanded(false)
+                }}
+                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded-sm hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                />
-              </svg>
-            ) : (
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                />
-              </svg>
+                <img className="w-4 h-4" src={deleteIcon} alt="" />
+                <span>Invalidate Icon Cache</span>
+              </button>
             )}
-            <span>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
-          </button>
 
-          {/* custom firefox version */}
-          <div className="pt-2 mt-1 text-xs text-center text-gray-400 border-t dark:text-gray-500 dark:border-gray-600">
-            v
-            {navigator.userAgent.includes('Chrome')
-              ? packageData.version
-              : '3' + packageData.version.slice(1)}
+            <button
+              onClick={toggleDarkMode}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors rounded hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+            >
+              {darkMode ? (
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                  />
+                </svg>
+              )}
+              <span>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
+
+            {/* custom firefox version */}
+            <div className="pt-2 mt-1 text-xs text-center text-gray-400 border-t dark:text-gray-500 dark:border-gray-600">
+              v{isChrome ? packageData.version : '3' + packageData.version.slice(1)}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )
