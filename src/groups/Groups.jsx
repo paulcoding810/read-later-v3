@@ -18,6 +18,13 @@ async function getGroupsDatabase() {
   return await groupDB.getAll()
 }
 
+const sampleGroups = [
+  {
+    name: 'read later',
+    urls: ['https://github.com/paulcoding810/read-later-v3'],
+  },
+]
+
 export default function Groups({ setShowsGroups, darkMode }) {
   const [groups, setGroups] = useState([])
   const [editing, setEditing] = useState(false)
@@ -78,8 +85,11 @@ export default function Groups({ setShowsGroups, darkMode }) {
           goBack={backFromEditor}
         />
       ) : groups.length === 0 ? (
-        <div className="flex h-48 items-center justify-center text-gray-400 dark:text-gray-500">
-          No groups yet.
+        <div className="flex flex-col gap-3 p-4 text-gray-500 dark:text-gray-400">
+          <div className="text-sm">No groups added. Sample group:</div>
+          <pre className="max-h-56 overflow-auto rounded-sm border border-gray-200 bg-white p-3 text-xs leading-relaxed text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+            {JSON.stringify(sampleGroups, null, 2)}
+          </pre>
         </div>
       ) : (
         <div className="space-y-3 p-4">
