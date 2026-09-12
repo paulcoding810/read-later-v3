@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import BackIcon from '../assets/arrow_back.svg?react'
 import EditIcon from '../assets/edit.svg?react'
 import OpenInNewIcon from '../assets/open_in_new.svg?react'
-import { groupDB } from '../helper'
+import { messages } from '../background/message'
 import { createTab } from '../utils/tabs'
 import Group from './Group'
 import GroupEditor from './GroupEditor'
@@ -15,7 +15,15 @@ function openInNewTab() {
 }
 
 async function getGroupsDatabase() {
-  return await groupDB.getAll()
+  return await new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: messages.GET_GROUPS }, (response) => {
+      if (response?.success) {
+        resolve(response.groups)
+      } else {
+        resolve([])
+      }
+    })
+  })
 }
 
 const sampleGroups = [

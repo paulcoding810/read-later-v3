@@ -228,6 +228,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           sendResponse({ success: false, error: err.message })
         })
       break
+    case messages.GET_GROUPS:
+      groupDB
+        .getAll()
+        .then((groups) => {
+          sendResponse({ success: true, groups })
+        })
+        .catch((err) => {
+          logError(err)
+          sendResponse({ success: false, error: err.message })
+        })
+      break
     case messages.OPEN_GROUP_URLS:
       request.urls.toReversed().forEach((url, index) => {
         setTimeout(() => createTab(url), index * 250)
