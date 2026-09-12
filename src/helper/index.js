@@ -27,6 +27,10 @@ const groupDB = new IndexedDBWrapper('Group', 'groups', 1, [
   { name: groupIndexKey, keyPath: 'name', options: { unique: true } },
 ])
 
+/**
+ * One favicon per domain, with a TTL. `data` holds either a base64 data URL (Firefox,
+ * taken straight off the tab) or the raw icon bytes as an ArrayBuffer (Chrome, fetched).
+ */
 const iconCacheDB = new IndexedDBWrapper('IconCache', 'icons', 1, [
   { name: 'domainIndex', keyPath: 'domain', options: { unique: true } },
 ])

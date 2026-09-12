@@ -2,15 +2,29 @@ import { useState, useEffect } from 'react'
 import CloseIcon from '../assets/close.svg?react'
 import CopyIcon from '../assets/copy.svg?react'
 import CheckIcon from '../assets/check.svg?react'
-import { createTab, getIcon } from '../utils/tabs'
+import { createTab, getIcon, s2IconUrl } from '../utils/tabs'
 
 export default function Tab({ title, url, onRemove }) {
   const [isCopied, setIsCopied] = useState(false)
   const [icon, setIcon] = useState('')
+  const [failedSrc, setFailedSrc] = useState(null)
 
   useEffect(() => {
-    getIcon(url).then(setIcon)
+    setFailedSrc(null)
+
+    let alive = true
+    getIcon(url).then((src) => {
+      if (alive) setIcon(src)
+    })
+    return () => {
+      alive = false
+    }
   }, [url])
+
+  // Empty until the cache lookup resolves, then the remote service only as a last
+  // resort. Tracks the failing src rather than a boolean so a late-arriving icon still
+  // gets its chance to render, and so a failing fallback can't loop.
+  const iconSrc = icon && icon !== failedSrc ? icon : failedSrc ? s2IconUrl(url) : ''
 
   const handleClick = (event) => {
     createTab(url, false, event.shiftKey)
@@ -35,7 +49,16 @@ export default function Tab({ title, url, onRemove }) {
       className="group relative mb-1 flex cursor-pointer flex-row items-center gap-2 rounded-sm border border-gray-200 bg-white p-2 text-black transition-colors hover:border-gray-300 hover:bg-gray-50 active:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:active:bg-blue-950/40"
       onClick={handleClick}
     >
-      <img className="h-6 w-6 shrink-0" src={icon} alt="" />
+      {iconSrc ? (
+        <img
+          className="h-6 w-6 shrink-0"
+          src={iconSrc}
+          alt=""
+          onError={() => setFailedSrc(iconSrc)}
+        />
+      ) : (
+        <div className="h-6 w-6 shrink-0" />
+      )}
       <div className="min-w-0 flex-1">
         <div
           title={title}

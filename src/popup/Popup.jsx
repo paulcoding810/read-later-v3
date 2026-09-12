@@ -18,6 +18,7 @@ import Groups from '../groups/Groups'
 import '../tailwind.css'
 import { iconCacheDB } from '../helper'
 import { setBadge, setBadgeBackground } from '../utils/badge'
+import { isFirefox } from '../utils/browser'
 import { save2Json } from '../utils/file'
 import { getCurrentWindowTabs } from '../utils/tabs'
 import { useDarkMode } from '../hooks/useDarkMode'
@@ -75,7 +76,7 @@ export function Popup() {
   const [query, setQuery] = useState('')
   const [expanded, setExpanded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [isChrome] = useState(navigator.userAgent.includes('Chrome'))
+  const isChrome = !isFirefox()
 
   const getDBAndSetTabs = useCallback(async (query) => {
     setIsLoading(true)
@@ -241,21 +242,19 @@ export function Popup() {
               <span>Copy All URLs</span>
             </button>
 
-            {isChrome && (
-              <button
-                onClick={async () => {
-                  await iconCacheDB.clear()
-                  setExpanded(false)
-                }}
-                className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-              >
-                <DeleteIcon
-                  aria-hidden="true"
-                  className="size-4 text-red-500 dark:text-red-300 [&_path]:fill-current"
-                />
-                <span>Invalidate Icon Cache</span>
-              </button>
-            )}
+            <button
+              onClick={async () => {
+                await iconCacheDB.clear()
+                setExpanded(false)
+              }}
+              className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+            >
+              <DeleteIcon
+                aria-hidden="true"
+                className="size-4 text-red-500 dark:text-red-300 [&_path]:fill-current"
+              />
+              <span>Invalidate Icon Cache</span>
+            </button>
 
             <button
               onClick={toggleDarkMode}

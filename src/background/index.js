@@ -2,6 +2,7 @@ import Fuse from 'fuse.js'
 import colors from 'tailwindcss/colors'
 import { groupDB, readLaterDB } from '../helper'
 import { setBadge, setBadgeBackground } from '../utils/badge'
+import { isFirefox } from '../utils/browser'
 import { createTab, getCurrentWindowTabsInfo } from '../utils/tabs'
 import devDB from './devdb'
 import { commands, messages } from './message'
@@ -32,10 +33,6 @@ function removeFromFuse(tab) {
 
 function logError(err) {
   console.log('onError', err)
-}
-
-function isFirefox() {
-  return navigator.userAgent.includes('Firefox')
 }
 
 async function isWindows() {

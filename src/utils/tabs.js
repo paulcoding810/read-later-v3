@@ -1,4 +1,5 @@
 import { iconCacheDB } from '../helper'
+import { isFirefox } from './browser'
 import { isURL } from './url'
 
 async function getCachedIcon(domain) {
@@ -11,6 +12,9 @@ async function getCachedIcon(domain) {
         await iconCacheDB.delete(cached.id)
         return null
       }
+      // Firefox entries are already data URLs; Chrome entries are raw bytes.
+      if (typeof cached.data === 'string') return cached.data
+
       const blob = new Blob([cached.data], { type: 'image/png' })
       return URL.createObjectURL(blob)
     }
@@ -22,10 +26,28 @@ async function getCachedIcon(domain) {
 
 const ONE_MONTH = 30 * 24 * 60 * 60 * 1000
 
+/**
+ * Upsert an icon for a domain. `domainIndex` is unique, so an existing row has to be
+ * replaced by id rather than added again.
+ */
+async function putCachedIcon(domain, data, ttl = ONE_MONTH) {
+  try {
+    await iconCacheDB.open()
+    const existing = await iconCacheDB.getByIndex(domain)
+    const record = { domain, data, timestamp: Date.now(), ttl }
+    if (existing) {
+      await iconCacheDB.update({ ...record, id: existing.id })
+    } else {
+      await iconCacheDB.add(record)
+    }
+  } catch {
+    // Silently fail
+  }
+}
+
 async function setCachedIcon(domain, blobData, ttl = ONE_MONTH) {
   try {
-    const arrayBuffer = await blobData.arrayBuffer()
-    await iconCacheDB.add({ domain, data: arrayBuffer, timestamp: Date.now(), ttl })
+    await putCachedIcon(domain, await blobData.arrayBuffer(), ttl)
   } catch {
     // Silently fail
   }
@@ -156,15 +178,29 @@ export function updateUrl(url) {
   })
 }
 
-export async function getIcon(url) {
-  let domain
+/**
+ * Remote favicon service, used as a fallback when a tab carries no icon of its own.
+ */
+export function s2IconUrl(url) {
   try {
-    domain = new URL(url).host
+    return `https://www.google.com/s2/favicons?sz=64&domain=${new URL(url).host}`
+  } catch {
+    return ''
+  }
+}
+
+export async function getIcon(url) {
+  const iconUrl = s2IconUrl(url)
+  try {
+    const domain = new URL(url).host
 
     const cached = await getCachedIcon(domain)
     if (cached) return cached
 
-    const iconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
+    // Firefox seeds the cache from the tab's own favicon, so there is nothing worth
+    // fetching here — an uncached domain just falls back to the remote icon.
+    if (isFirefox()) return iconUrl
+
     const response = await fetch(iconUrl, { mode: 'no-cors' })
     if (!response.ok) return iconUrl
 
@@ -174,7 +210,7 @@ export async function getIcon(url) {
     return cachedUrl || iconUrl
   } catch (error) {
     console.error('fail to get icon', error)
-    return `https://www.google.com/s2/favicons?sz=64&domain=${domain}`
+    return iconUrl
   }
 }
 
@@ -191,7 +227,33 @@ export function parseTabInfo(tab) {
   }
 }
 
+/**
+ * Firefox exposes the favicon on the tab itself, usually as a base64 data URL. Seed the
+ * icon cache with it so rendering never has to fetch a remote icon for these domains.
+ * Chrome leaves `favIconUrl` unset here and keeps populating the cache from `getIcon`.
+ */
+async function cacheTabIcons(tabs) {
+  if (!isFirefox()) return
+
+  const seen = new Set()
+  for (const tab of tabs) {
+    if (!tab.favIconUrl) continue
+
+    let domain
+    try {
+      domain = new URL(tab.url).host
+    } catch {
+      continue
+    }
+    if (seen.has(domain)) continue
+
+    seen.add(domain)
+    await putCachedIcon(domain, tab.favIconUrl)
+  }
+}
+
 export async function getCurrentWindowTabsInfo(highlighted) {
-  const tabs = await getCurrentWindowTabs(highlighted)
-  return tabs.filter(isTabValid).map(parseTabInfo)
+  const tabs = (await getCurrentWindowTabs(highlighted)).filter(isTabValid)
+  await cacheTabIcons(tabs)
+  return tabs.map(parseTabInfo)
 }
