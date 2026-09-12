@@ -1,7 +1,7 @@
 {
   "name": "read-later",
   "displayName": "Read Later",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "paulcoding",
   "description": "Save tabs for later, search them instantly, and organize reading lists into reusable groups.",
   "type": "module",
