@@ -54,6 +54,7 @@ export default defineManifest({
         'img/logo-48.png',
         'img/logo-128.png',
         'groups.html',
+        'usage.html',
       ],
       matches: [],
     },

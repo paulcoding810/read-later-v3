@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => {
         input: {
           groups: './groups.html',
           shortcutWarning: './shortcut-warning.html',
+          usage: './usage.html',
         },
         output: {
           chunkFileNames: 'assets/chunk-[hash].js',

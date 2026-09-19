@@ -7,6 +7,7 @@ import DeleteIcon from '../assets/delete.svg?react'
 import DownloadIcon from '../assets/download.svg?react'
 import EmptyIcon from '../assets/empty.svg?react'
 import MoreIcon from '../assets/more.svg?react'
+import OpenInNewIcon from '../assets/open_in_new.svg?react'
 import LoadingIcon from '../assets/loading.svg?react'
 import GroupsIcon from '../assets/workspaces.svg?react'
 import DarkMode from '../assets/dark_mode.svg?react'
@@ -20,7 +21,7 @@ import { iconCacheDB } from '../helper'
 import { setBadge, setBadgeBackground } from '../utils/badge'
 import { isFirefox } from '../utils/browser'
 import { save2Json } from '../utils/file'
-import { getCurrentWindowTabs } from '../utils/tabs'
+import { createTab, getCurrentWindowTabs } from '../utils/tabs'
 import { useDarkMode } from '../hooks/useDarkMode'
 
 const exportJson = async () => {
@@ -29,6 +30,10 @@ const exportJson = async () => {
       save2Json(response.data)
     }
   })
+}
+
+const openUsagePage = () => {
+  createTab(chrome.runtime.getURL('usage.html'), true)
 }
 
 const copyTabUrl = async () => {
@@ -254,6 +259,20 @@ export function Popup() {
                 className="size-4 text-red-500 dark:text-red-300 [&_path]:fill-current"
               />
               <span>Invalidate Icon Cache</span>
+            </button>
+
+            <button
+              onClick={() => {
+                openUsagePage()
+                setExpanded(false)
+              }}
+              className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+            >
+              <OpenInNewIcon
+                aria-hidden="true"
+                className="size-4 text-blue-500 dark:text-blue-300 [&_path]:fill-current"
+              />
+              <span>Shortcuts</span>
             </button>
 
             <button
