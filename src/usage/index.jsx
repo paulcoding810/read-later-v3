@@ -168,6 +168,15 @@ function Usage() {
           </Row>
           <Row
             trigger={
+              <span className="text-sm text-gray-700 dark:text-gray-300">Restore Backup…</span>
+            }
+          >
+            Opens a page for reading one of those files back. Entries are merged, never replaced: a
+            tab whose URL you already have, or a group whose name is taken, is skipped and counted
+            in the summary.
+          </Row>
+          <Row
+            trigger={
               <span className="text-sm text-gray-700 dark:text-gray-300">Clear Icon Cache</span>
             }
           >

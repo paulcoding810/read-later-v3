@@ -5,6 +5,7 @@ import AddIcon from '../assets/circle_plus.svg?react'
 import CopyIcon from '../assets/copy.svg?react'
 import DeleteIcon from '../assets/delete.svg?react'
 import DownloadIcon from '../assets/download.svg?react'
+import UploadIcon from '../assets/upload.svg?react'
 import EmptyIcon from '../assets/empty.svg?react'
 import MoreIcon from '../assets/more.svg?react'
 import OpenInNewIcon from '../assets/open_in_new.svg?react'
@@ -34,6 +35,10 @@ const exportJson = async () => {
 
 const openUsagePage = () => {
   createTab(chrome.runtime.getURL('usage.html'), true)
+}
+
+const openBackupPage = () => {
+  createTab(chrome.runtime.getURL('backup.html'), true)
 }
 
 function MenuItem({ icon, label, hint, onClick }) {
@@ -257,6 +262,16 @@ export function Popup() {
               hint="Your whole reading list and every group, as a JSON file"
               onClick={() => {
                 exportJson()
+                setExpanded(false)
+              }}
+            />
+
+            <MenuItem
+              icon={<UploadIcon aria-hidden="true" className={menuIcon} />}
+              label="Restore Backup…"
+              hint="Opens a page where you can pick a backup file to merge back in"
+              onClick={() => {
+                openBackupPage()
                 setExpanded(false)
               }}
             />

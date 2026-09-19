@@ -144,6 +144,56 @@ async function getAndSaveTabsToReadLater() {
   }
 }
 
+/**
+ * Merge an exported backup back in. Existing rows win: a tab whose URL is already saved
+ * and a group whose name is taken are both skipped rather than overwritten.
+ */
+async function importData(data) {
+  if (!data || typeof data !== 'object') {
+    throw new Error('Expected an object with "read_later" and/or "groups"')
+  }
+
+  const { read_later: readLater, groups } = data
+  const result = { tabs: 0, groups: 0, skipped: 0 }
+
+  if (Array.isArray(readLater)) {
+    for (const item of readLater) {
+      if (!item?.url || !item?.title || (await tabExisted(item.url))) {
+        result.skipped += 1
+        continue
+      }
+      // Drop any exported id so the store assigns a fresh one.
+      await readLaterDB.add({ url: item.url, title: item.title, date: item.date ?? Date.now() })
+      result.tabs += 1
+    }
+  }
+
+  // Groups export as an array, but older backups hold a { name: urls } map.
+  const groupList = Array.isArray(groups)
+    ? groups
+    : groups && typeof groups === 'object'
+      ? Object.entries(groups).map(([name, urls]) => ({ name, urls }))
+      : []
+
+  for (const group of groupList) {
+    if (!group?.name || !Array.isArray(group.urls)) {
+      result.skipped += 1
+      continue
+    }
+    try {
+      await groupDB.add({ name: group.name, urls: group.urls })
+      result.groups += 1
+    } catch {
+      // Duplicate name — the unique nameIndex rejects it.
+      result.skipped += 1
+    }
+  }
+
+  await initFuse()
+  await updateBadge()
+  return result
+}
+
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   if (reason === 'install') {
     await openWindowsFirefoxShortcutWarning()
@@ -244,6 +294,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         setTimeout(() => createTab(url), index * 250)
       })
       sendResponse({ success: true })
+      break
+    case messages.IMPORT_DATA:
+      importData(request.data)
+        .then((result) => {
+          sendResponse({ success: true, result })
+        })
+        .catch((err) => {
+          logError(err)
+          sendResponse({ success: false, error: err.message })
+        })
       break
     case messages.EXPORT_DATA:
       Promise.all([readLaterDB.getAll(), groupDB.getAll()])

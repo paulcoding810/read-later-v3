@@ -55,6 +55,7 @@ export default defineManifest({
         'img/logo-128.png',
         'groups.html',
         'usage.html',
+        'backup.html',
       ],
       matches: [],
     },

@@ -5,6 +5,7 @@ export const messages = {
   GET_ALL_TABS: 'get_all_tabs',
   GET_COUNT: 'get_count',
   EXPORT_DATA: 'export_data',
+  IMPORT_DATA: 'import_data',
   OPEN_LINK: 'open_link',
   OPEN_SELECTED_TEXT: 'open_selected_text',
   SEARCH_TABS: 'search_tabs',
