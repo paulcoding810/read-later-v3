@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
     build: {
       emptyOutDir: true,
       outDir: `build/${browser}`,
+      sourcemap: mode === 'development',
       rollupOptions: {
         input: {
           groups: './groups.html',
