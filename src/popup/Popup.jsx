@@ -36,6 +36,25 @@ const openUsagePage = () => {
   createTab(chrome.runtime.getURL('usage.html'), true)
 }
 
+function MenuItem({ icon, label, hint, onClick }) {
+  return (
+    <button
+      title={hint}
+      onClick={onClick}
+      className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  )
+}
+
+function MenuDivider() {
+  return <div className="my-1 border-t border-gray-200 dark:border-gray-600" />
+}
+
+const menuIcon = 'size-4 shrink-0 text-blue-500 dark:text-blue-300 [&_path]:fill-current'
+
 const copyTabUrl = async () => {
   const tabs = await getCurrentWindowTabs(true)
   const urls = tabs.map((tab) => tab.url)
@@ -201,7 +220,15 @@ export function Popup() {
             onClick={() => setExpanded(false)}
           />
           <div className="absolute top-14 right-2 z-50 flex flex-col items-stretch gap-1 rounded-lg border border-gray-200 bg-white p-2 shadow-xl dark:border-gray-600 dark:bg-gray-800">
-            <button
+            <MenuItem
+              icon={
+                <AddIcon
+                  aria-hidden="true"
+                  className="size-4 shrink-0 text-blue-500 dark:text-blue-300 [&_*]:stroke-current"
+                />
+              }
+              label="Save Selected Tabs"
+              hint="Every tab selected in this window — just the current one if you have not multi-selected"
               onClick={() => {
                 chrome.runtime.sendMessage({ type: messages.ADD_TAB }, (response) => {
                   if (response?.success) {
@@ -210,88 +237,68 @@ export function Popup() {
                   setExpanded(false)
                 })
               }}
-              className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-            >
-              <AddIcon
-                aria-hidden="true"
-                className="size-4 text-blue-500 dark:text-blue-300 [&_*]:stroke-current"
-              />
-              <span>Add Current Tab</span>
-            </button>
+            />
 
-            <button
-              onClick={() => {
-                exportJson()
-                setExpanded(false)
-              }}
-              className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-            >
-              <DownloadIcon
-                aria-hidden="true"
-                className="size-4 text-blue-500 dark:text-blue-300 [&_path]:fill-current"
-              />
-              <span>Export Data</span>
-            </button>
-
-            <button
+            <MenuItem
+              icon={<CopyIcon aria-hidden="true" className={menuIcon} />}
+              label="Copy Selected Tab URLs"
+              hint="Copies those same tabs' URLs to the clipboard as JSON — not your saved list"
               onClick={() => {
                 copyTabUrl()
                 setExpanded(false)
               }}
-              className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-            >
-              <CopyIcon
-                aria-hidden="true"
-                className="size-4 text-blue-500 dark:text-blue-300 [&_path]:fill-current"
-              />
-              <span>Copy All URLs</span>
-            </button>
+            />
 
-            <button
+            <MenuDivider />
+
+            <MenuItem
+              icon={<DownloadIcon aria-hidden="true" className={menuIcon} />}
+              label="Download Backup"
+              hint="Your whole reading list and every group, as a JSON file"
+              onClick={() => {
+                exportJson()
+                setExpanded(false)
+              }}
+            />
+
+            <MenuItem
+              icon={
+                <DeleteIcon
+                  aria-hidden="true"
+                  className="size-4 shrink-0 text-red-500 dark:text-red-300 [&_path]:fill-current"
+                />
+              }
+              label="Clear Icon Cache"
+              hint="Drops saved favicons — they come back as rows load again"
               onClick={async () => {
                 await iconCacheDB.clear()
                 setExpanded(false)
               }}
-              className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-            >
-              <DeleteIcon
-                aria-hidden="true"
-                className="size-4 text-red-500 dark:text-red-300 [&_path]:fill-current"
-              />
-              <span>Invalidate Icon Cache</span>
-            </button>
+            />
 
-            <button
+            <MenuDivider />
+
+            <MenuItem
+              icon={<OpenInNewIcon aria-hidden="true" className={menuIcon} />}
+              label="Shortcuts"
+              hint="Opens the full list of keys and click actions in a new tab"
               onClick={() => {
                 openUsagePage()
                 setExpanded(false)
               }}
-              className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-            >
-              <OpenInNewIcon
-                aria-hidden="true"
-                className="size-4 text-blue-500 dark:text-blue-300 [&_path]:fill-current"
-              />
-              <span>Shortcuts</span>
-            </button>
+            />
 
-            <button
+            <MenuItem
+              icon={
+                darkMode ? (
+                  <DarkMode aria-hidden="true" className={menuIcon} />
+                ) : (
+                  <LightMode aria-hidden="true" className={menuIcon} />
+                )
+              }
+              label={darkMode ? 'Light Mode' : 'Dark Mode'}
               onClick={toggleDarkMode}
-              className="flex items-center gap-2 rounded px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
-            >
-              {darkMode ? (
-                <DarkMode
-                  aria-hidden="true"
-                  className="size-4 text-blue-500 dark:text-blue-300 [&_path]:fill-current"
-                />
-              ) : (
-                <LightMode
-                  aria-hidden="true"
-                  className="size-4 text-blue-500 dark:text-blue-300 [&_path]:fill-current"
-                />
-              )}
-              <span>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
-            </button>
+            />
 
             {/* custom firefox version */}
             <div className="mt-1 border-t pt-2 text-center text-xs text-gray-400 dark:border-gray-600 dark:text-gray-500">

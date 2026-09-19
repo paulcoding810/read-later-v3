@@ -138,36 +138,41 @@ function Usage() {
           <Row trigger={<Combo keys={['Esc']} />}>Leave the group editor without saving.</Row>
         </Section>
 
-        <Section title="Popup menu" description="Behind the ⋯ button, next to the search box.">
+        <Section
+          title="Popup menu"
+          description="Behind the ⋯ button. The first pair acts on the tabs you have open; the second on what you have already saved."
+        >
           <Row
             trigger={
-              <span className="text-sm text-gray-700 dark:text-gray-300">Add Current Tab</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">Save Selected Tabs</span>
             }
           >
             Same as <Combo keys={['Ctrl', 'B']} />, without the keyboard.
           </Row>
           <Row
-            trigger={<span className="text-sm text-gray-700 dark:text-gray-300">Export Data</span>}
-          >
-            Download every saved tab and group as a JSON file.
-          </Row>
-          <Row
-            trigger={
-              <span className="text-sm text-gray-700 dark:text-gray-300">Copy All URLs</span>
-            }
-          >
-            Copy the URLs of the currently highlighted tabs as a JSON array — the open tabs, not the
-            saved ones.
-          </Row>
-          <Row
             trigger={
               <span className="text-sm text-gray-700 dark:text-gray-300">
-                Invalidate Icon Cache
+                Copy Selected Tab URLs
               </span>
             }
           >
-            Drop every cached favicon. They are refetched, or re-read from your open tabs, as rows
-            render again.
+            Copies those same open tabs' URLs to the clipboard as a JSON array. It does not touch
+            your saved list.
+          </Row>
+          <Row
+            trigger={
+              <span className="text-sm text-gray-700 dark:text-gray-300">Download Backup</span>
+            }
+          >
+            Writes every saved tab and every group to a JSON file.
+          </Row>
+          <Row
+            trigger={
+              <span className="text-sm text-gray-700 dark:text-gray-300">Clear Icon Cache</span>
+            }
+          >
+            Drops every stored favicon. They are fetched again, or re-read from your open tabs, as
+            rows render.
           </Row>
         </Section>
 
