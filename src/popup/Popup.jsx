@@ -42,6 +42,10 @@ const openBackupPage = () => {
   createTab(chrome.runtime.getURL('backup.html'), true)
 }
 
+const openChangelog = () => {
+  createTab('https://github.com/paulcoding810/read-later-v3/releases', true)
+}
+
 function MenuItem({ icon, label, hint, onClick }) {
   return (
     <button
@@ -372,9 +376,16 @@ export function Popup() {
             />
 
             {/* custom firefox version */}
-            <div className="mt-1 border-t pt-2 text-center text-xs text-gray-400 dark:border-gray-600 dark:text-gray-500">
+            <button
+              title="See what changed on GitHub"
+              onClick={() => {
+                openChangelog()
+                setExpanded(false)
+              }}
+              className="mt-1 border-t pt-2 text-center text-xs text-gray-400 transition-colors hover:text-blue-500 dark:border-gray-600 dark:text-gray-500 dark:hover:text-blue-300"
+            >
               v{isChrome ? packageData.version : '3' + packageData.version.slice(1)}
-            </div>
+            </button>
           </div>
         </>
       )}

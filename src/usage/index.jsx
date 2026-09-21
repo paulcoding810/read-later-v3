@@ -213,6 +213,14 @@ function Usage() {
           </Row>
           <Row
             trigger={
+              <span className="text-sm text-gray-700 dark:text-gray-300">The version number</span>
+            }
+          >
+            At the foot of the menu — click it to open the GitHub releases page and see what
+            changed.
+          </Row>
+          <Row
+            trigger={
               <span className="text-sm text-gray-700 dark:text-gray-300">Clear Icon Cache</span>
             }
           >
