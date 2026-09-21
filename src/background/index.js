@@ -11,7 +11,7 @@ import { commands, messages } from './message'
 const isProd = import.meta.env.PROD
 const WINDOWS_FIREFOX_SHORTCUT_WARNING_PAGE = 'shortcut-warning.html'
 
-const fuseOptions = { keys: ['title', 'url', 'tags'], threshold: 0.4 }
+const fuseOptions = { keys: ['title', 'url', 'tags'], threshold: 0.4, useExtendedSearch: true }
 
 let fuse = new Fuse([], fuseOptions)
 
@@ -293,7 +293,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       readLaterDB
         .getAll()
         .then((tabs) => {
-          const query = request.query
+          const query = request.query?.trim()
           if (!query) {
             sendResponse({ success: true, tabs })
           } else {

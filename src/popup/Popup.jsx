@@ -121,7 +121,7 @@ export function Popup() {
     setIsLoading(true)
     try {
       const data = await getReadLaterDatabase(query)
-      setTabs(query ? data : data.toReversed())
+      setTabs(query.trim() ? data : data.toReversed())
     } catch (error) {
       console.error('failed to get data', error)
     } finally {

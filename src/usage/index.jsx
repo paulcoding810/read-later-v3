@@ -238,6 +238,32 @@ function Usage() {
             Finds its tabs plus anything else that looks similar. Clicking a tag instead filters to
             exactly the tabs carrying it — typing is inclusive, clicking is exact.
           </Row>
+          <Row trigger={<Key>space</Key>}>
+            Several words narrow rather than widen: <strong>rust book</strong> finds entries
+            matching <em>both</em>, not either.
+          </Row>
+          <Row trigger={<Key>=</Key>}>
+            Exact match, no fuzziness — <strong>=rust</strong> is the typed equivalent of clicking
+            the <strong>rust</strong> tag.
+          </Row>
+          <Row trigger={<Key>!</Key>}>
+            Exclude. <strong>rust !book</strong> finds rust entries that aren't about books.
+          </Row>
+          <Row trigger={<Key>|</Key>}>
+            Either. <strong>rust | docs</strong> finds entries matching one or the other.
+          </Row>
+          <Row
+            trigger={
+              <span className="inline-flex flex-wrap items-center gap-1">
+                <Key>^</Key>
+                <Key>$</Key>
+              </span>
+            }
+          >
+            Anchor to the start or end — <strong>^Fuse</strong> begins with it,{' '}
+            <strong>docs$</strong> ends with it. One consequence of all this: punctuation-heavy
+            literals like <strong>C++</strong> are read as operators and won't match.
+          </Row>
         </Section>
       </div>
     </main>
