@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import colors from 'tailwindcss/colors'
 import packageData from '../../package.json'
 import AddIcon from '../assets/circle_plus.svg?react'
+import CloseIcon from '../assets/close.svg?react'
 import CopyIcon from '../assets/copy.svg?react'
 import DeleteIcon from '../assets/delete.svg?react'
 import DownloadIcon from '../assets/download.svg?react'
@@ -86,6 +87,14 @@ const removeTabFromDB = async (tabId) => {
   })
 }
 
+const updateTabTagsInDB = async (id, tags) => {
+  return await new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: messages.UPDATE_TAB, tab: { id, tags } }, (response) => {
+      resolve(response?.success ? response.tab : null)
+    })
+  })
+}
+
 const getCount = async () => {
   return await new Promise((resolve) => {
     chrome.runtime.sendMessage({ type: messages.GET_COUNT }, (response) => {
@@ -106,12 +115,13 @@ export function Popup() {
   const [expanded, setExpanded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const isChrome = !isFirefox()
+  const [tagFilter, setTagFilter] = useState(null)
 
   const getDBAndSetTabs = useCallback(async (query) => {
     setIsLoading(true)
     try {
       const data = await getReadLaterDatabase(query)
-      setTabs(data.toReversed())
+      setTabs(query ? data : data.toReversed())
     } catch (error) {
       console.error('failed to get data', error)
     } finally {
@@ -120,9 +130,23 @@ export function Popup() {
   }, [])
 
   const removeTab = async (tab) => {
-    setTabs(tabs.filter((t) => t !== tab))
+    setTabs((current) => current.filter((t) => t.id !== tab.id))
     await removeTabFromDB(tab.id)
     await updateBadge()
+  }
+
+  const handleTagsChange = async (tab, tags) => {
+    const previous = tab.tags ?? []
+    setTabs((current) => current.map((t) => (t.id === tab.id ? { ...t, tags } : t)))
+
+    const saved = await updateTabTagsInDB(tab.id, tags)
+    if (!saved) {
+      setTabs((current) => current.map((t) => (t.id === tab.id ? { ...t, tags: previous } : t)))
+    }
+  }
+
+  const handleTagClick = (tag) => {
+    setTagFilter((current) => (current === tag ? null : tag))
   }
 
   const updateBadge = async () => {
@@ -135,6 +159,8 @@ export function Popup() {
     getDBAndSetTabs(query)
   }, [query])
 
+  const visibleTabs = tagFilter ? tabs.filter((tab) => (tab.tags ?? []).includes(tagFilter)) : tabs
+
   if (showsGroups) return <Groups {...{ setShowsGroups, darkMode }} />
 
   return (
@@ -143,38 +169,50 @@ export function Popup() {
         expanded ? 'min-h-80' : ''
       }`}
     >
-      <div className="sticky top-0 z-10 flex flex-row items-center gap-1.5 bg-white pb-2 dark:bg-gray-900">
-        <SearchBar {...{ query, setQuery }} />
-        <button
-          title="More"
-          onClick={() => setExpanded(!expanded)}
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors ${
-            expanded
-              ? 'border-blue-300 bg-blue-100 dark:border-blue-700 dark:bg-blue-900/50'
-              : 'border-gray-300 hover:border-gray-400 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800'
-          }`}
-        >
-          <MoreIcon
-            aria-hidden="true"
-            className={`size-5 text-blue-500 transition-transform dark:text-blue-300 [&_path]:fill-current ${
-              expanded ? 'rotate-90' : ''
+      <div className="sticky top-0 z-10 flex flex-col gap-1.5 bg-white pb-2 dark:bg-gray-900">
+        <div className="flex flex-row items-center gap-1.5">
+          <SearchBar {...{ query, setQuery }} />
+          <button
+            title="More"
+            onClick={() => setExpanded(!expanded)}
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors ${
+              expanded
+                ? 'border-blue-300 bg-blue-100 dark:border-blue-700 dark:bg-blue-900/50'
+                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800'
             }`}
-          />
-        </button>
-        <button
-          title="Groups"
-          onClick={() => setShowsGroups(!showsGroups)}
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors ${
-            showsGroups
-              ? 'border-blue-300 bg-blue-100 dark:border-blue-700 dark:bg-blue-900/50'
-              : 'border-gray-300 hover:border-gray-400 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800'
-          }`}
-        >
-          <GroupsIcon
-            aria-hidden="true"
-            className="size-5 text-blue-500 dark:text-blue-300 [&_path]:fill-current"
-          />
-        </button>
+          >
+            <MoreIcon
+              aria-hidden="true"
+              className={`size-5 text-blue-500 transition-transform dark:text-blue-300 [&_path]:fill-current ${
+                expanded ? 'rotate-90' : ''
+              }`}
+            />
+          </button>
+          <button
+            title="Groups"
+            onClick={() => setShowsGroups(!showsGroups)}
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors ${
+              showsGroups
+                ? 'border-blue-300 bg-blue-100 dark:border-blue-700 dark:bg-blue-900/50'
+                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800'
+            }`}
+          >
+            <GroupsIcon
+              aria-hidden="true"
+              className="size-5 text-blue-500 dark:text-blue-300 [&_path]:fill-current"
+            />
+          </button>
+        </div>
+        {tagFilter && (
+          <div className="flex items-center">
+            <span className="flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-900/50 dark:text-blue-200">
+              tag: {tagFilter}
+              <button aria-label="Clear tag filter" onClick={() => setTagFilter(null)}>
+                <CloseIcon className="size-3" />
+              </button>
+            </span>
+          </div>
+        )}
       </div>
 
       {isLoading ? (
@@ -186,11 +224,23 @@ export function Popup() {
         </div>
       ) : (
         <div className={expanded ? 'pointer-events-none opacity-50' : ''}>
-          {tabs.length === 0 && (
+          {visibleTabs.length === 0 && (
             <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
               <EmptyIcon aria-hidden="true" className="size-16 opacity-50" />
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                {query ? (
+                {tagFilter ? (
+                  <div className="flex flex-col gap-1">
+                    <span>
+                      No tabs tagged "{tagFilter}"{query ? ` matching "${query}"` : ''}
+                    </span>
+                    <button
+                      className="text-xs text-blue-500 hover:underline dark:text-blue-300"
+                      onClick={() => setTagFilter(null)}
+                    >
+                      Clear filter
+                    </button>
+                  </div>
+                ) : query ? (
                   <span>No results found for "{query}"</span>
                 ) : (
                   <div className="flex flex-col gap-1">
@@ -211,8 +261,14 @@ export function Popup() {
               </div>
             </div>
           )}
-          {tabs.map((tab, index) => (
-            <Tab key={index} {...tab} onRemove={() => removeTab(tab)} />
+          {visibleTabs.map((tab) => (
+            <Tab
+              key={tab.id}
+              {...tab}
+              onRemove={() => removeTab(tab)}
+              onTagsChange={(tags) => handleTagsChange(tab, tags)}
+              onTagClick={handleTagClick}
+            />
           ))}
         </div>
       )}

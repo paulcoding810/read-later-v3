@@ -3,6 +3,7 @@ import colors from 'tailwindcss/colors'
 import { groupDB, readLaterDB } from '../helper'
 import { setBadge, setBadgeBackground } from '../utils/badge'
 import { isFirefox } from '../utils/browser'
+import { normalizeTags } from '../utils/tags'
 import { createTab, getCurrentWindowTabsInfo } from '../utils/tabs'
 import devDB from './devdb'
 import { commands, messages } from './message'
@@ -10,17 +11,12 @@ import { commands, messages } from './message'
 const isProd = import.meta.env.PROD
 const WINDOWS_FIREFOX_SHORTCUT_WARNING_PAGE = 'shortcut-warning.html'
 
-let fuse = new Fuse([], {
-  keys: ['title', 'url'],
-  threshold: 0.4,
-})
+const fuseOptions = { keys: ['title', 'url', 'tags'], threshold: 0.4 }
+
+let fuse = new Fuse([], fuseOptions)
 
 async function initFuse() {
-  const tabs = await readLaterDB.getAll()
-  fuse = new Fuse(tabs, {
-    keys: ['title', 'url'],
-    threshold: 0.4,
-  })
+  fuse = new Fuse(await readLaterDB.getAll(), fuseOptions)
 }
 
 function addToFuse(tab) {
@@ -162,8 +158,14 @@ async function importData(data) {
         result.skipped += 1
         continue
       }
+      const tags = normalizeTags(item.tags)
       // Drop any exported id so the store assigns a fresh one.
-      await readLaterDB.add({ url: item.url, title: item.title, date: item.date ?? Date.now() })
+      await readLaterDB.add({
+        url: item.url,
+        title: item.title,
+        date: item.date ?? Date.now(),
+        ...(tags.length > 0 && { tags }),
+      })
       result.tabs += 1
     }
   }
@@ -192,6 +194,22 @@ async function importData(data) {
   await initFuse()
   await updateBadge()
   return result
+}
+
+/**
+ * Replace a saved tab's tags. Reads first because IDB update() is a whole-record put.
+ */
+async function updateTabTags(id, tags) {
+  const existing = await readLaterDB.get(id)
+  if (!existing) throw new Error(`No saved tab with id ${id}`)
+
+  const next = { ...existing, tags: normalizeTags(tags) }
+  if (next.tags.length === 0) delete next.tags
+
+  await readLaterDB.update(next)
+  removeFromFuse(next)
+  addToFuse(next)
+  return next
 }
 
 chrome.runtime.onInstalled.addListener(async ({ reason }) => {
@@ -239,6 +257,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           sendResponse({ success: false, error: err.message })
         })
       break
+    case messages.UPDATE_TAB:
+      updateTabTags(request.tab.id, request.tab.tags)
+        .then((tab) => {
+          sendResponse({ success: true, tab })
+        })
+        .catch((err) => {
+          logError(err)
+          sendResponse({ success: false, error: err.message })
+        })
+      break
     case messages.GET_ALL_TABS:
       readLaterDB
         .getAll()
@@ -269,7 +297,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           if (!query) {
             sendResponse({ success: true, tabs })
           } else {
-            const results = fuse.search(query).map((result) => result.item)
+            // Map back onto the stored rows; a drifted Fuse doc then costs a missed
+            // match rather than rendering stale data.
+            const byId = new Map(tabs.map((tab) => [tab.id, tab]))
+            const results = fuse
+              .search(query)
+              .map((result) => byId.get(result.item.id))
+              .filter(Boolean)
             sendResponse({ success: true, tabs: results })
           }
         })

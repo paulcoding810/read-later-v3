@@ -3,9 +3,11 @@ import IndexedDBWrapper from './IDB'
 /** 
 Read Later table
 
-| title                                     | url                                | date (timestamp) |
-|-------------------------------------------|------------------------------------|------------------|
-| GitHub - oumi-ai/oumi                     | https://github.com/oumi-ai/oumi    | 1738596650154    |
+| title                                     | url                                | date (timestamp) | tags (optional)   |
+|-------------------------------------------|------------------------------------|------------------|-------------------|
+| GitHub - oumi-ai/oumi                     | https://github.com/oumi-ai/oumi    | 1738596650154    | ["ml", "reading"] |
+
+tags is absent until a row is tagged, and removed again when its last tag goes.
 
 
 Groups table

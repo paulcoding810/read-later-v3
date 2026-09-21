@@ -46,7 +46,8 @@ Older versions:
 - Quick open ReadLater popup with `Ctrl + Shift + B`
 - Open tab in incognito mode with `Shift + Click`
 - Open saved tabs in new window. `Cmd/Ctrl + Click` to also remove tab from reading list
-- Fuzzy search through saved tabs
+- Fuzzy search through saved tabs, by title, URL or tag
+- Tag saved tabs and filter the list by tag
 - Export all saved tabs to JSON
 - Copy all URLs from selected tabs
 - Favicon caching with ability to invalidate cache (Chrome)

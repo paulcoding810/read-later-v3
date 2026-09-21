@@ -139,6 +139,42 @@ function Usage() {
         </Section>
 
         <Section
+          title="Tags"
+          description="Free-form labels on a saved tab. They are lowercased, so Work and work are the same tag."
+        >
+          <Row
+            trigger={
+              <span className="text-sm text-gray-700 dark:text-gray-300">Hover, then +</span>
+            }
+          >
+            Opens a small input under the URL. Separate tags with spaces — each space commits the
+            one you just typed, so <strong>search docs js</strong> adds three. The input stays open
+            until you dismiss it.
+          </Row>
+          <Row trigger={<Combo keys={['Esc']} />}>
+            Close the input without adding. Clicking away discards what you typed too — only Space
+            and <Key>Enter</Key> save.
+          </Row>
+          <Row trigger={<Combo keys={['Backspace']} />}>
+            On an empty input, removes the last tag on that row.
+          </Row>
+          <Row
+            trigger={<span className="text-sm text-gray-700 dark:text-gray-300">Click a tag</span>}
+          >
+            Show only tabs carrying it. A <strong>tag:</strong> pill appears under the search box —
+            click its ×, or the same tag again, to clear it.
+          </Row>
+          <Row
+            trigger={
+              <span className="text-sm text-gray-700 dark:text-gray-300">Hover a tag, ×</span>
+            }
+          >
+            Remove that tag from the row. There is no global rename or delete — a tag exists only as
+            long as some tab carries it.
+          </Row>
+        </Section>
+
+        <Section
           title="Popup menu"
           description="Behind the ⋯ button. The first pair acts on the tabs you have open; the second on what you have already saved."
         >
@@ -191,8 +227,16 @@ function Usage() {
               <span className="text-sm text-gray-700 dark:text-gray-300">Type anything</span>
             }
           >
-            Fuzzy-matches against both the title and the URL of saved tabs, so approximate spelling
-            still finds the page.
+            Fuzzy-matches against the title, the URL and the tags of saved tabs, so approximate
+            spelling still finds the page.
+          </Row>
+          <Row
+            trigger={
+              <span className="text-sm text-gray-700 dark:text-gray-300">Type a tag name</span>
+            }
+          >
+            Finds its tabs plus anything else that looks similar. Clicking a tag instead filters to
+            exactly the tabs carrying it — typing is inclusive, clicking is exact.
           </Row>
         </Section>
       </div>
